@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Sistema de Predicción de Demanda
+    </title>
+
+</head>
+
+
+<body>
+
+    <h1>
+        Sistema de Predicción de Demanda e Inventario
+    </h1>
+
+
+    <p>
+        Cargue un archivo CSV con el historial de ventas
+        e inventario.
+    </p>
+
+
+    {% if error %}
+
+        <div>
+
+            <strong>Error:</strong>
+
+            {{ error }}
+
+        </div>
+
+    {% endif %}
+
+
+    <form
+        action="{{ url_for('main.procesar') }}"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <label>
+
+            Seleccione un archivo CSV:
+
+        </label>
+
+
+        <br><br>
+
+
+        <input
+            type="file"
+            name="archivo"
+            accept=".csv"
+            required
+        >
+
+
+        <br><br>
+
+        <small>
+            Formato esperado: fecha, producto_id, demanda, precio, inventario
+        </small>
+
+        <button type="submit">
+
+            Procesar archivo
+
+        </button>
+
+    </form>
+
+</body>
+
+</html>

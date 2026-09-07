@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Resultados
+    </title>
+
+</head>
+
+
+<body>
+
+    <h1>
+        Resultados del análisis
+    </h1>
+
+
+    <!-- ================================= -->
+    <!-- MÉTRICAS DE LOS MODELOS -->
+    <!-- ================================= -->
+
+    <h2>
+        Comparación de modelos
+    </h2>
+
+
+    <table border="1">
+
+        <thead>
+
+            <tr>
+
+                <th>Modelo</th>
+
+                <th>MAE</th>
+
+                <th>RMSE</th>
+
+                <th>MAPE</th>
+
+                <th>WAPE</th>
+
+                <th>R²</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for fila in resultados_modelos %}
+
+            <tr>
+
+                <td>
+                    {{ fila["Modelo"] }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["MAE"]) }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["RMSE"]) }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["MAPE (%)"]) }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["WAPE (%)"]) }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["R2"]) }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <!-- ================================= -->
+    <!-- MÉTRICAS DEL SISTEMA FINAL -->
+    <!-- ================================= -->
+
+    <br><br>
+
+
+    <h2>
+        Rendimiento del sistema final
+    </h2>
+
+
+    <p>
+
+        <strong>MAPE final:</strong>
+
+        {% if mape_final is not none %}
+
+            {{ mape_final }}%
+
+        {% else %}
+
+            No disponible
+
+        {% endif %}
+
+    </p>
+
+
+    <p>
+
+        <strong>WAPE final:</strong>
+
+        {% if wape_final is not none %}
+
+            {{ wape_final }}%
+
+        {% else %}
+
+            No disponible
+
+        {% endif %}
+
+    </p>
+
+
+    <!-- ================================= -->
+    <!-- PREDICCIONES DE DEMANDA -->
+    <!-- ================================= -->
+
+    <br><br>
+
+
+    <h2>
+        Predicciones de demanda
+    </h2>
+
+
+    <table border="1">
+
+        <thead>
+
+            <tr>
+
+                <th>Fecha</th>
+
+                <th>Producto</th>
+
+                <th>Demanda real</th>
+
+                <th>Predicción XGBoost</th>
+
+                <th>Predicción Media Móvil</th>
+
+                <th>Predicción Final</th>
+
+                <th>Método usado</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for fila in predicciones %}
+
+            <tr>
+
+                <td>
+                    {{ fila["fecha"] }}
+                </td>
+
+                <td>
+                    {{ fila["producto_id"] }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["demanda"]) }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["prediccion_xgboost"]) }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["prediccion_baseline_3m"]) }}
+                </td>
+
+                <td>
+                    {{ "%.2f"|format(fila["prediccion_final"]) }}
+                </td>
+
+                <td>
+                    {{ fila["metodo_usado"] }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <!-- ================================= -->
+    <!-- VOLVER -->
+    <!-- ================================= -->
+
+    <br><br>
+
+
+    <a href="{{ url_for('main.index') }}">
+
+        Procesar otro archivo
+
+    </a>
+
+
+</body>
+
+</html>
