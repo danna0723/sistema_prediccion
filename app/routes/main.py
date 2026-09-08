@@ -65,8 +65,24 @@ def procesar():
     ruta_csv = os.path.join(current_app.config["UPLOAD_FOLDER"], nombre_seguro)
     archivo.save(ruta_csv)
 
+    # Presupuesto opcional: si el usuario lo deja vacío o pone algo
+    # inválido, ejecutar_sistema cae a su valor por defecto en vez de
+    # bloquear la subida por esto.
+    presupuesto_texto = request.form.get("presupuesto", "").strip()
+    presupuesto = None
+    if presupuesto_texto:
+        try:
+            presupuesto = float(presupuesto_texto)
+            if presupuesto <= 0:
+                presupuesto = None
+        except ValueError:
+            presupuesto = None
+
     try:
-        resultado = ejecutar_sistema(ruta_csv, current_app.config["RESULTADOS_FOLDER"])
+        resultado = ejecutar_sistema(
+            ruta_csv, current_app.config["RESULTADOS_FOLDER"],
+            presupuesto_capital_trabajo=presupuesto
+        )
     except ValueError as e:
         flash(str(e))
         return redirect(url_for("main.index"))

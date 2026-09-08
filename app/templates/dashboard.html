@@ -70,6 +70,24 @@
             <strong>Punto de reorden</strong>: nivel de inventario en el que hay que volver a pedir
             (demanda esperada durante el tiempo de entrega + ese colchón).
         </p>
+        {% if r.presupuesto_capital_trabajo %}
+        <p class="nota">
+            <strong>Presupuesto</strong>: la cantidad sugerida a pedir respeta un presupuesto total
+            de <strong>${{ "{:,.0f}".format(r.presupuesto_capital_trabajo) }}</strong>, repartido en
+            partes iguales entre los productos del catálogo (${{ "{:,.0f}".format(r.presupuesto_por_producto) }}
+            por producto). Cambiá este monto subiendo el archivo de nuevo con otro valor en el
+            formulario.
+        </p>
+        {% endif %}
+        {% if alertas and r.costo_total_pedidos_urgentes %}
+        <p class="metrica-destacada">
+            Costo estimado de hacer estos {{ alertas | length }} pedidos ahora:
+            <strong>${{ "{:,.0f}".format(r.costo_total_pedidos_urgentes) }}</strong>
+            {% if r.presupuesto_capital_trabajo %}
+            (de un presupuesto total de ${{ "{:,.0f}".format(r.presupuesto_capital_trabajo) }})
+            {% endif %}
+        </p>
+        {% endif %}
 
         <div class="bloque">
             {% if alertas %}
@@ -84,6 +102,7 @@
                             <th>Punto de reorden</th>
                             <th>Tiempo de entrega del proveedor</th>
                             <th>Cantidad sugerida a pedir</th>
+                            <th>Costo estimado del pedido</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,6 +126,7 @@
                             <td>{{ fila.punto_reorden }}</td>
                             <td>{{ fila.lead_time_semanas }} semana(s)</td>
                             <td class="total-destacado">{{ fila.cantidad_sugerida_pedido if fila.cantidad_sugerida_pedido is not none else "—" }}</td>
+                            <td>{{ "${:,.0f}".format(fila.costo_estimado_pedido) if fila.costo_estimado_pedido is not none else "—" }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
