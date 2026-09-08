@@ -1,81 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <title>
-        Sistema de Predicción de Demanda
-    </title>
-
+    <title>Sistema de Predicción de Demanda e Inventario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
-
 <body>
+    <main class="contenedor">
+        <h1>Sistema de Predicción de Demanda e Inventario</h1>
+        <p class="subtitulo">Sube tu archivo CSV de ventas para generar el pronóstico.</p>
 
-    <h1>
-        Sistema de Predicción de Demanda e Inventario
-    </h1>
+        {% with mensajes = get_flashed_messages() %}
+            {% if mensajes %}
+                <div class="aviso-error">
+                    {% for mensaje in mensajes %}<p>{{ mensaje }}</p>{% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
+        <form action="{{ url_for('main.procesar') }}" method="post" enctype="multipart/form-data" class="formulario-subida">
+            <label for="archivo">
+                <span>Selecciona tu archivo CSV</span>
+                <input type="file" id="archivo" name="archivo" accept=".csv" required>
+            </label>
+            <button type="submit">Procesar</button>
+        </form>
 
-    <p>
-        Cargue un archivo CSV con el historial de ventas
-        e inventario.
-    </p>
-
-
-    {% if error %}
-
-        <div>
-
-            <strong>Error:</strong>
-
-            {{ error }}
-
-        </div>
-
-    {% endif %}
-
-
-    <form
-        action="{{ url_for('main.procesar') }}"
-        method="POST"
-        enctype="multipart/form-data"
-    >
-
-        <label>
-
-            Seleccione un archivo CSV:
-
-        </label>
-
-
-        <br><br>
-
-
-        <input
-            type="file"
-            name="archivo"
-            accept=".csv"
-            required
-        >
-
-
-        <br><br>
-
-        <small>
-            Formato esperado: fecha, producto_id, demanda, precio, inventario
-        </small>
-
-        <button type="submit">
-
-            Procesar archivo
-
-        </button>
-
-    </form>
-
+        <nav class="enlaces-secundarios">
+            <a href="{{ url_for('main.dashboard') }}">Ver dashboard (último resultado)</a>
+            <a href="{{ url_for('main.desarrollo') }}">Ver pantalla técnica (último resultado)</a>
+        </nav>
+    </main>
 </body>
-
 </html>

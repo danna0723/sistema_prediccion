@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pronóstico de Demanda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="contenedor">
+        <a href="{{ url_for('main.index') }}" class="volver">&larr; Subir otro archivo</a>
+
+        <h1>Pronóstico de demanda — próximos 3 meses</h1>
+        <p class="subtitulo">
+            Cantidad estimada (en unidades) que se venderá de cada producto en cada uno de los
+            próximos 3 meses, ordenado de mayor a menor demanda total esperada.
+        </p>
+
+        <div class="bloque">
+            <div class="tabla-scroll">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            {% for mes in r.meses_pronosticados_legibles %}
+                            <th>{{ mes }}</th>
+                            {% endfor %}
+                            <th>Total 3 meses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fila in r.pronostico_pivot %}
+                        <tr>
+                            <td>
+                                <span class="producto-id">{{ fila.producto_id }}</span>
+                                {% if fila.nombre_producto %}
+                                <span class="producto-nombre">{{ fila.nombre_producto }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if fila.categoria %}
+                                <span class="categoria-badge">{{ fila.categoria }}</span>
+                                {% else %}
+                                <span class="categoria-vacia">Sin categoría</span>
+                                {% endif %}
+                            </td>
+                            {% for valor in fila.valores %}
+                            <td>{{ valor }}</td>
+                            {% endfor %}
+                            <td class="total-destacado">{{ fila.total }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% set alertas = r.reorder | selectattr("ordenar", "equalto", "SI") | list | sort(attribute="cantidad_sugerida_pedido", reverse=True) %}
+        <h2>Puntos de reposición y alertas</h2>
+        <p class="subtitulo">
+            Combina el pronóstico de demanda con el inventario actual y el tiempo de entrega de
+            cada proveedor para avisar qué productos hay que pedir ya.
+            {% if r.reorder %}
+            <strong>{{ alertas | length }} de {{ r.reorder | length }}</strong> productos necesitan pedido ahora.
+            {% endif %}
+        </p>
+        <p class="nota">
+            <strong>Stock de seguridad</strong>: colchón extra para no quedarse sin stock si la
+            demanda o el proveedor se retrasan de lo esperado.
+            <strong>Punto de reorden</strong>: nivel de inventario en el que hay que volver a pedir
+            (demanda esperada durante el tiempo de entrega + ese colchón).
+        </p>
+
+        <div class="bloque">
+            {% if alertas %}
+            <div class="tabla-scroll">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Inventario actual</th>
+                            <th>Stock de seguridad</th>
+                            <th>Punto de reorden</th>
+                            <th>Tiempo de entrega del proveedor</th>
+                            <th>Cantidad sugerida a pedir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fila in alertas %}
+                        <tr class="fila-alerta">
+                            <td>
+                                <span class="producto-id">{{ fila.producto_id }}</span>
+                                {% if fila.nombre_producto %}
+                                <span class="producto-nombre">{{ fila.nombre_producto }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if fila.categoria %}
+                                <span class="categoria-badge">{{ fila.categoria }}</span>
+                                {% else %}
+                                <span class="categoria-vacia">Sin categoría</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ fila.inventario_actual if fila.inventario_actual is not none else "—" }}</td>
+                            <td>{{ fila.stock_seguridad }}</td>
+                            <td>{{ fila.punto_reorden }}</td>
+                            <td>{{ fila.lead_time_semanas }} semana(s)</td>
+                            <td class="total-destacado">{{ fila.cantidad_sugerida_pedido if fila.cantidad_sugerida_pedido is not none else "—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="nota">Ningún producto necesita reposición por ahora, según el inventario y el pronóstico actuales.</p>
+            {% endif %}
+        </div>
+
+        {% set proximos = r.reorder
+            | selectattr("ordenar", "equalto", "NO")
+            | selectattr("dias_para_pedido", "ne", none)
+            | selectattr("dias_para_pedido", "le", 90)
+            | list
+            | sort(attribute="dias_para_pedido") %}
+        <h2>Próximos pedidos (siguientes 90 días)</h2>
+        <p class="subtitulo">
+            Fecha estimada en la que cada producto va a llegar a su punto de reorden, calculada
+            a partir del inventario actual y el ritmo de consumo pronosticado — todavía no hay que
+            pedirlos, pero conviene tenerlos en el radar.
+        </p>
+
+        <div class="bloque">
+            {% if proximos %}
+            <div class="tabla-scroll">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Fecha estimada de pedido</th>
+                            <th>Días restantes</th>
+                            <th>Inventario actual</th>
+                            <th>Punto de reorden</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fila in proximos %}
+                        <tr>
+                            <td>
+                                <span class="producto-id">{{ fila.producto_id }}</span>
+                                {% if fila.nombre_producto %}
+                                <span class="producto-nombre">{{ fila.nombre_producto }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if fila.categoria %}
+                                <span class="categoria-badge">{{ fila.categoria }}</span>
+                                {% else %}
+                                <span class="categoria-vacia">Sin categoría</span>
+                                {% endif %}
+                            </td>
+                            <td class="total-destacado">{{ fila.fecha_estimada_pedido }}</td>
+                            <td>{{ fila.dias_para_pedido }}</td>
+                            <td>{{ fila.inventario_actual if fila.inventario_actual is not none else "—" }}</td>
+                            <td>{{ fila.punto_reorden }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="nota">Ningún producto va a necesitar reposición en los próximos 90 días, según el ritmo de consumo pronosticado.</p>
+            {% endif %}
+        </div>
+
+        <p class="nota">
+            La fecha de pedido es una estimación lineal (asume que se consume al ritmo promedio
+            pronosticado); no anticipa picos puntuales de demanda dentro del mes.
+        </p>
+
+        <p class="nota">
+            <a href="{{ url_for('main.desarrollo') }}">Ver el detalle técnico de cómo se calculó este pronóstico &rarr;</a>
+        </p>
+    </main>
+</body>
+</html>

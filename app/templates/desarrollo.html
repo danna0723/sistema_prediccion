@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel técnico — Comparación de modelos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="contenedor">
+        <a href="{{ url_for('main.index') }}" class="volver">&larr; Subir otro archivo</a>
+        <p><a href="{{ url_for('main.dashboard') }}">Ver dashboard del sistema &rarr;</a></p>
+
+        <h1>Panel técnico de validación</h1>
+        <p class="subtitulo">Esta pantalla es para desarrollo/validación del modelo, no para el usuario final.</p>
+
+        <section class="bloque">
+            <h2>Comparación de modelos</h2>
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Modelo</th><th>MAE</th><th>RMSE</th><th>R²</th><th>MAPE (%)</th><th>WAPE (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fila in r.metricas %}
+                    <tr>
+                        <td>{{ fila["Modelo"] }}</td>
+                        <td>{{ "%.2f"|format(fila["MAE"]) }}</td>
+                        <td>{{ "%.2f"|format(fila["RMSE"]) }}</td>
+                        <td>{{ "%.2f"|format(fila["R2"]) }}</td>
+                        <td>{{ "%.2f"|format(fila["MAPE (%)"]) if fila["MAPE (%)"] is not none else "—" }}</td>
+                        <td>{{ "%.2f"|format(fila["WAPE (%)"]) if fila["WAPE (%)"] is not none else "—" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="metrica-destacada">
+                Sistema final (ML + baseline combinados) — MAPE: {{ r.mape_final }}% · WAPE: {{ r.wape_final }}%
+            </p>
+        </section>
+
+        <section class="bloque">
+            <h2>Segmentación e importancia de características</h2>
+            <img class="grafica" src="{{ url_for('main.imagenes', nombre_archivo='segmentacion_abc_variabilidad.png') }}" alt="Segmentación ABC y variabilidad">
+            <img class="grafica" src="{{ url_for('main.imagenes', nombre_archivo='xgb_feature_importance.png') }}" alt="Importancia de características">
+        </section>
+
+        <section class="bloque">
+            <h2>Predicciones sobre meses históricos (validación)</h2>
+            <p class="nota">
+                Estos meses ya ocurrieron — se usan para medir el error del modelo, comparando
+                contra la demanda real que ya se conoce.
+            </p>
+            <div class="tabla-scroll">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th><th>Producto</th><th>Demanda real</th>
+                            <th>Predicción XGBoost</th><th>Predicción Media Móvil</th>
+                            <th>Predicción Final</th><th>Método</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fila in r.predicciones[:50] %}
+                        <tr>
+                            <td>{{ fila.fecha }}</td>
+                            <td>{{ fila.producto_id }}</td>
+                            <td>{{ fila.demanda }}</td>
+                            <td>{{ fila.prediccion_xgboost }}</td>
+                            <td>{{ fila.prediccion_baseline_3m }}</td>
+                            <td>{{ fila.prediccion_final }}</td>
+                            <td>{{ fila.metodo_usado }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="bloque">
+            <h2>Tabla de reabastecimiento</h2>
+            <div class="tabla-scroll">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Producto</th><th>ABC</th><th>Variabilidad</th><th>Método</th>
+                            <th>Punto de reorden</th><th>Inventario actual</th><th>EOQ</th><th>¿Ordenar?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fila in r.reorder[:50] %}
+                        <tr class="{{ 'fila-alerta' if fila.ordenar == 'SI' else '' }}">
+                            <td>{{ fila.producto_id }}</td>
+                            <td>{{ fila.categoria_abc }}</td>
+                            <td>{{ fila.variabilidad }}</td>
+                            <td>{{ fila.metodo_pronostico }}</td>
+                            <td>{{ fila.punto_reorden }}</td>
+                            <td>{{ fila.inventario_actual }}</td>
+                            <td>{{ fila.eoq }}</td>
+                            <td>{{ fila.ordenar }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="bloque">
+            <h2>Descargar archivos generados</h2>
+            <ul class="lista-descargas">
+                <li><a href="{{ url_for('main.descargar', nombre_archivo='predicciones.csv') }}">predicciones.csv</a></li>
+                <li><a href="{{ url_for('main.descargar', nombre_archivo='evaluacion_modelos.csv') }}">evaluacion_modelos.csv</a></li>
+                <li><a href="{{ url_for('main.descargar', nombre_archivo='reorder_table.csv') }}">reorder_table.csv</a></li>
+                <li><a href="{{ url_for('main.descargar', nombre_archivo='segmentacion_productos.csv') }}">segmentacion_productos.csv</a></li>
+                <li><a href="{{ url_for('main.descargar', nombre_archivo='pronostico_futuro.csv') }}">pronostico_futuro.csv</a></li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>
