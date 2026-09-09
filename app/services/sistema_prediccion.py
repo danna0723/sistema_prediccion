@@ -109,6 +109,14 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
     costos_urgentes = reorder_df.loc[reorder_df["ordenar"] == "SI", "costo_estimado_pedido"]
     costo_total_pedidos_urgentes = costos_urgentes.sum(skipna=True) if not costos_urgentes.empty else 0.0
 
+    # Valor total del inventario que hay HOY en stock (para la pantalla
+    # de "Estado del inventario"), y cuántos productos no tienen dato de
+    # inventario en el CSV (para que quede claro que esos no se están
+    # contando, en vez de asumir silenciosamente que están en cero).
+    valor_total_inventario = reorder_df["valor_inventario_actual"].sum(skipna=True)
+    productos_sin_dato_inventario = int(reorder_df["inventario_actual"].isna().sum())
+    productos_en_alerta = int((reorder_df["ordenar"] == "SI").sum())
+
     # 7. Gráficas y exportación de artefactos (graficas.py / exportacion.py)
     graficas_metricas = graficar_comparacion_metricas(resultados, carpeta_resultados)
     rutas = guardar_resultados(
@@ -134,5 +142,8 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
         "presupuesto_capital_trabajo": round(float(presupuesto_usado), 2),
         "presupuesto_por_producto": round(float(presupuesto_por_producto), 2),
         "costo_total_pedidos_urgentes": round(float(costo_total_pedidos_urgentes), 2),
+        "valor_total_inventario": None if pd.isna(valor_total_inventario) else round(float(valor_total_inventario), 2),
+        "productos_sin_dato_inventario": productos_sin_dato_inventario,
+        "productos_en_alerta": productos_en_alerta,
         "archivos": rutas,
     }

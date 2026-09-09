@@ -1,44 +1,33 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Sistema de Predicción de Demanda e Inventario</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <main class="contenedor">
-        <h1>Sistema de Predicción de Demanda e Inventario</h1>
-        <p class="subtitulo">Sube tu archivo CSV de ventas para generar el pronóstico.</p>
+{% extends "base.html" %}
 
-        {% with mensajes = get_flashed_messages() %}
-            {% if mensajes %}
-                <div class="aviso-error">
-                    {% for mensaje in mensajes %}<p>{{ mensaje }}</p>{% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+{% block titulo %}Subir archivo — Sistema de Predicción de Demanda e Inventario{% endblock %}
+{% block encabezado %}Subir archivo{% endblock %}
+{% block titulo_pagina %}Sistema de Predicción de Demanda e Inventario{% endblock %}
+{% block subtitulo_pagina %}Sube tu archivo CSV de ventas para generar el pronóstico.{% endblock %}
 
-        <form action="{{ url_for('main.procesar') }}" method="post" enctype="multipart/form-data" class="formulario-subida">
-            <label for="archivo">
-                <span>Selecciona tu archivo CSV</span>
-                <input type="file" id="archivo" name="archivo" accept=".csv" required>
-            </label>
-            <label for="presupuesto">
-                <span>Presupuesto disponible para compras de inventario (todo el catálogo, en la moneda de tus costos unitarios)</span>
-                <input type="number" id="presupuesto" name="presupuesto" min="0" step="any" value="500000">
-            </label>
-            <p class="nota">
-                Este monto se reparte en partes iguales entre todos los productos activos del
-                catálogo y limita cuánto se sugiere pedir de cada uno. Si no lo cambiás, se usa
-                $500,000 como valor por defecto.
-            </p>
-            <button type="submit">Procesar</button>
-        </form>
-
-        <nav class="enlaces-secundarios">
-            <a href="{{ url_for('main.dashboard') }}">Ver dashboard (último resultado)</a>
-            <a href="{{ url_for('main.desarrollo') }}">Ver pantalla técnica (último resultado)</a>
-        </nav>
-    </main>
-</body>
-</html>
+{% block contenido %}
+<div class="row">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-block">
+                <form action="{{ url_for('main.procesar') }}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="archivo">Selecciona tu archivo CSV</label>
+                        <input type="file" id="archivo" name="archivo" accept=".csv" class="form-control-file" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="presupuesto">Presupuesto disponible para compras de inventario</label>
+                        <input type="number" id="presupuesto" name="presupuesto" min="0" step="any" value="500000" class="form-control">
+                        <small class="form-text text-muted">
+                            Se reparte en partes iguales entre todos los productos activos del
+                            catálogo y limita cuánto se sugiere pedir de cada uno. Si no lo
+                            cambiás, se usa $500,000 como valor por defecto.
+                        </small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Procesar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

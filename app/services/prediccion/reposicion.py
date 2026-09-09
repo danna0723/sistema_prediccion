@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from app.services.prediccion.utils import nan_a_none
+
 SERVICE_LEVEL_Z = 1.65
 LEAD_TIME_DEFAULT_MESES = 0.5
 WORKING_CAPITAL_BUDGET_DEFAULT = 500_000
@@ -47,15 +49,26 @@ def calcular_tabla_reorden(
     # sistema ni qué tan viejo sea el archivo subido.
     fecha_referencia = df_mensual["fecha"].max()
 
+    # Precalculado UNA vez fuera del loop (en vez de filtrar cada
+    # DataFrame por producto en cada una de las 856 iteraciones, que es
+    # O(n²) y era buena parte del tiempo que tardaba esta sección):
+    # estadísticas del pronóstico por producto, última fila de
+    # df_mensual por producto, y producto_comportamiento indexado.
+    stats_pronostico = pronostico_futuro_df.groupby("producto_id")["prediccion_final"].agg(
+        demanda_promedio="mean", desviacion_demanda=lambda x: np.std(x)
+    )
+    ultima_fila_por_producto = (
+        df_mensual.sort_values("fecha").groupby("producto_id").tail(1).set_index("producto_id")
+    )
+    producto_comportamiento_idx = producto_comportamiento.set_index("producto_id")
+
     reorder_table = []
     for producto in sorted(df_model["producto_id"].unique()):
-        producto_pronostico = pronostico_futuro_df[pronostico_futuro_df["producto_id"] == producto]
-        if len(producto_pronostico) == 0:
+        if producto not in stats_pronostico.index:
             continue
-        pred_producto = producto_pronostico["prediccion_final"].values
-        demanda_promedio = np.mean(pred_producto)
-        desviacion_demanda = np.std(pred_producto)
-        fila_params = df_mensual[df_mensual["producto_id"] == producto].iloc[-1]
+        demanda_promedio = stats_pronostico.at[producto, "demanda_promedio"]
+        desviacion_demanda = stats_pronostico.at[producto, "desviacion_demanda"]
+        fila_params = ultima_fila_por_producto.loc[producto]
 
         lead_time_meses = (
             fila_params["lead_time_semanas"] / 4.345
@@ -112,7 +125,16 @@ def calcular_tabla_reorden(
         else:
             costo_estimado_pedido = np.nan
 
-        segmento = producto_comportamiento[producto_comportamiento["producto_id"] == producto].iloc[0]
+        # Valor de lo que ya hay en stock (inventario actual * costo
+        # unitario) — para la pantalla de "Estado del inventario", donde
+        # interesa cuánto capital está inmovilizado hoy en el depósito,
+        # no cuánto costaría reponerlo.
+        if not pd.isna(inventario_actual) and not pd.isna(costo_unitario_producto):
+            valor_inventario_actual = inventario_actual * costo_unitario_producto
+        else:
+            valor_inventario_actual = np.nan
+
+        segmento = producto_comportamiento_idx.loc[producto]
 
         # Fecha estimada en la que el inventario va a llegar al punto de
         # reorden, asumiendo que se consume al ritmo promedio pronosticado
@@ -140,6 +162,8 @@ def calcular_tabla_reorden(
             "producto_id": producto,
             "nombre_producto": segmento.get("nombre_producto"),
             "categoria": segmento.get("categoria"),
+            "proveedor_principal": segmento.get("proveedor_principal"),
+            "proveedor_alterno": segmento.get("proveedor_alterno"),
             "categoria_abc": segmento["categoria_abc"],
             "variabilidad": segmento["variabilidad"],
             "metodo_pronostico": "XGBoost" if segmento["usar_ml"] else "Media móvil",
@@ -154,9 +178,27 @@ def calcular_tabla_reorden(
             "cantidad_sugerida_pedido": round(cantidad_sugerida, 2) if not pd.isna(cantidad_sugerida) else np.nan,
             "costo_unitario": round(costo_unitario_producto, 2) if not pd.isna(costo_unitario_producto) else np.nan,
             "costo_estimado_pedido": round(costo_estimado_pedido, 2) if not pd.isna(costo_estimado_pedido) else np.nan,
+            "valor_inventario_actual": round(valor_inventario_actual, 2) if not pd.isna(valor_inventario_actual) else np.nan,
             "fecha_estimada_pedido": fecha_estimada_pedido.strftime("%Y-%m-%d") if fecha_estimada_pedido is not None else None,
             "dias_para_pedido": round(dias_para_pedido) if not pd.isna(dias_para_pedido) else None,
             "ordenar": "SI" if ya_hay_que_pedir else "NO"
         })
 
-    return pd.DataFrame(reorder_table), working_capital_budget, presupuesto_por_producto
+    reorder_df = pd.DataFrame(reorder_table)
+    # Reconstruir el DataFrame desde una lista de diccionarios puede
+    # volver a convertir a NaN los None que ya veníamos cuidando desde
+    # segmentacion.py (ver utils.nan_a_none) — se corrige de nuevo acá,
+    # justo antes de devolver la tabla final. Se incluyen también los
+    # campos NUMÉRICOS que pueden faltar (costo_unitario, eoq, etc.):
+    # esos ya se guardaban como np.nan (no None) más arriba porque son
+    # números, pero el mismo problema de fondo aplica — un DataFrame de
+    # float64 tampoco puede contener None, solo NaN — y en los templates
+    # se comparan con "is not none" para decidir si mostrar "—".
+    reorder_df = nan_a_none(reorder_df, [
+        "nombre_producto", "categoria", "proveedor_principal", "proveedor_alterno",
+        "fecha_estimada_pedido", "inventario_actual", "eoq", "limite_presupuesto_unidades",
+        "cantidad_sugerida_pedido", "costo_unitario", "costo_estimado_pedido",
+        "valor_inventario_actual",
+    ])
+
+    return reorder_df, working_capital_budget, presupuesto_por_producto

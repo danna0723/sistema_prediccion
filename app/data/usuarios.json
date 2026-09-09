@@ -1,0 +1,26 @@
+[
+  {
+    "nombre": "Dana",
+    "username": "dana1",
+    "email": "danna.andrearg@gmail.com",
+    "password_hash": "scrypt:32768:8:1$eqh5sdl2YyaP0nNF$04e793c3e977106c83aa9c0b50061925c39f2104940ec2d4ab633c4930a77538ddcdede74e77667cf53e560eed0d3d10a0a72f9d2ae3bce063f3b2b5ecfccca4",
+    "rol": "admin",
+    "empresa_id": "ddb49b76925a4104a3aa38836665692e"
+  },
+  {
+    "nombre": "Dana",
+    "username": "dana2",
+    "email": "danna.andrea1@gmail.com",
+    "password_hash": "scrypt:32768:8:1$WsdsMD3M955BhlZO$7dbad1303722e27d8a87f1f3065d983123213e399de30c76bd492dd085f7e6fce59cc8933858d8d66fbd83f21f53af6a605cba2f80e3730882f61891924e103b",
+    "rol": "admin",
+    "empresa_id": "7cbee7fc9c8842868e441feba0cd01da"
+  },
+  {
+    "nombre": "Dana",
+    "username": "dana3",
+    "email": "admin@jsonapi.com",
+    "password_hash": "scrypt:32768:8:1$RptQop5ZryGF0dAK$0761b90191c7a6eae0d5a3cf724e482b0edf710adf41fe77cedb01640ee7aece070f2d12cd8ca53a6354cccf29015dc0ddfd48a75eda8ef387cdec9861459d97",
+    "rol": "admin",
+    "empresa_id": "4254575ad8ac4e8a9de8489752b5e4b8"
+  }
+]

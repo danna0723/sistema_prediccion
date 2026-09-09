@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from app.services.prediccion.utils import nan_a_none
+
 NOMBRES_MES_ES = {
     1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio",
     7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre",
@@ -47,28 +49,47 @@ def generar_pronostico_futuro(df_mensual, producto_comportamiento, model, featur
         for h in range(HORIZONTE_MESES)
     ]
 
-    pronostico_futuro = []
-
-    for producto in sorted(df_mensual["producto_id"].unique()):
-
-        historial_producto = (
-            df_mensual[df_mensual["producto_id"] == producto]
-            .sort_values("fecha")
-        )
-
+    # Preparar el estado de cada producto UNA sola vez (no en cada
+    # horizonte): historial de demandas, última fila de df_mensual y su
+    # fila de segmentación. Se arma con groupby/set_index en vez de
+    # filtrar df_mensual/producto_comportamiento con una máscara booleana
+    # por cada producto (esto era O(n²) — con 856 productos, cientos de
+    # miles de comparaciones de más solo para armar el estado inicial).
+    producto_comportamiento_idx = producto_comportamiento.set_index("producto_id")
+    estado_por_producto = {}
+    for producto, historial_producto in df_mensual.sort_values("fecha").groupby("producto_id"):
         demandas = list(historial_producto["demanda"].values)
-
         if len(demandas) < 3:
             # No hay suficiente historial para calcular lag_1..lag_3
             continue
+        estado_por_producto[producto] = {
+            "demandas": demandas,
+            "ultima_fila": historial_producto.iloc[-1],
+            "segmento": producto_comportamiento_idx.loc[producto],
+        }
 
-        ultima_fila = historial_producto.iloc[-1]
-        segmento = producto_comportamiento[
-            producto_comportamiento["producto_id"] == producto
-        ].iloc[0]
+    productos_validos = sorted(estado_por_producto.keys())
 
-        for h in range(HORIZONTE_MESES):
-            mes_objetivo = proximo_mes + pd.DateOffset(months=h)
+    pronostico_futuro = []
+
+    # Recursivo, pero por HORIZONTE en vez de por producto: en cada paso
+    # se arma un lote con la fila de features de los ~800+ productos y
+    # se llama a model.predict() UNA vez para todo el lote, en lugar de
+    # una vez por producto (2568 llamadas individuales a XGBoost, cada
+    # una con su propio overhead de por medio, es la parte más lenta de
+    # todo el pipeline — pasar a predicción por lotes lo resuelve sin
+    # cambiar ningún cálculo, cada producto se sigue prediciendo con
+    # exactamente los mismos datos que antes, solo que juntos).
+    for h in range(HORIZONTE_MESES):
+        mes_objetivo = proximo_mes + pd.DateOffset(months=h)
+
+        filas_features = []
+        metadatos = []
+
+        for producto in productos_validos:
+            estado = estado_por_producto[producto]
+            demandas = estado["demandas"]
+            ultima_fila = estado["ultima_fila"]
 
             lag_1 = demandas[-1]
             lag_2 = demandas[-2]
@@ -102,9 +123,17 @@ def generar_pronostico_futuro(df_mensual, producto_comportamiento, model, featur
                 if "inventario_lag_1" in feature_cols:
                     fila_features["inventario_lag_1"] = ultima_fila.get("inventario", 0)
 
-            X_futuro = pd.DataFrame([fila_features])[feature_cols]
+            filas_features.append(fila_features)
+            metadatos.append((producto, media_movil_3))
 
-            pred_xgb_futuro = float(np.maximum(np.expm1(model.predict(X_futuro))[0], 0))
+        X_futuro_lote = pd.DataFrame(filas_features)[feature_cols]
+        preds_xgb_lote = np.maximum(np.expm1(model.predict(X_futuro_lote)), 0)
+
+        for (producto, media_movil_3), pred_xgb_futuro in zip(metadatos, preds_xgb_lote):
+            estado = estado_por_producto[producto]
+            segmento = estado["segmento"]
+
+            pred_xgb_futuro = float(pred_xgb_futuro)
             pred_baseline_futuro = float(max(media_movil_3, 0))
 
             usar_ml_producto = bool(segmento["usar_ml"])
@@ -125,9 +154,12 @@ def generar_pronostico_futuro(df_mensual, producto_comportamiento, model, featur
             })
 
             # La predicción de este mes alimenta los lags del siguiente
-            demandas.append(pred_final_futuro)
+            estado["demandas"].append(pred_final_futuro)
 
     pronostico_futuro_df = pd.DataFrame(pronostico_futuro)
+    # Ver utils.nan_a_none: reconstruir el DataFrame desde una lista de
+    # diccionarios puede convertir a NaN los None de nombre_producto/categoria.
+    pronostico_futuro_df = nan_a_none(pronostico_futuro_df, ["nombre_producto", "categoria"])
 
     pronostico_pivot = []
     if not pronostico_futuro_df.empty:

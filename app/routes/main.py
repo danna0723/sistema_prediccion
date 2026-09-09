@@ -3,11 +3,13 @@ import json
 
 from flask import (
     Blueprint, render_template, request, redirect,
-    url_for, flash, current_app, send_from_directory
+    url_for, flash, current_app, send_from_directory, session
 )
 from werkzeug.utils import secure_filename
 
 from app.services.sistema_prediccion import ejecutar_sistema
+from app.services.auth import admin_required, login_required
+from app.services.pedidos import cargar_pedidos, registrar_pedido, quitar_pedido
 
 main_bp = Blueprint("main", __name__)
 
@@ -21,7 +23,23 @@ def extension_permitida(nombre_archivo):
     )
 
 
-def guardar_ultimo_resultado(resultado):
+def carpeta_uploads(empresa_id):
+    """Carpeta de CSV subidos de una empresa puntual. Cada empresa
+    (cada admin que se registró) tiene la suya, separada del resto."""
+    ruta = os.path.join(current_app.config["UPLOAD_FOLDER_BASE"], empresa_id)
+    os.makedirs(ruta, exist_ok=True)
+    return ruta
+
+
+def carpeta_resultados(empresa_id):
+    """Carpeta donde ejecutar_sistema escribe el pronóstico, los
+    gráficos y demás archivos de resultado de una empresa puntual."""
+    ruta = os.path.join(current_app.config["RESULTADOS_FOLDER_BASE"], empresa_id)
+    os.makedirs(ruta, exist_ok=True)
+    return ruta
+
+
+def guardar_ultimo_resultado(resultado, empresa_id):
     """Guarda el resultado del procesamiento para que /desarrollo y
     /dashboard puedan leerlo después, sin volver a correr el pipeline.
 
@@ -29,27 +47,41 @@ def guardar_ultimo_resultado(resultado):
     (Timestamps de pandas, tipos numpy, etc.) a texto, sin tener que
     tocar sistema_prediccion.py para forzar tipos nativos de Python.
     """
-    ruta = current_app.config["ULTIMO_RESULTADO_PATH"]
+    ruta = os.path.join(carpeta_resultados(empresa_id), "ultimo_resultado.json")
     with open(ruta, "w", encoding="utf-8") as f:
         json.dump(resultado, f, ensure_ascii=False, default=str)
 
 
-def cargar_ultimo_resultado():
-    """Devuelve el último resultado guardado, o None si todavía no se
-    ha procesado ningún CSV en esta sesión del servidor."""
-    ruta = current_app.config["ULTIMO_RESULTADO_PATH"]
+def cargar_ultimo_resultado(empresa_id):
+    """Devuelve el último resultado guardado por esta empresa, o None
+    si todavía no procesó ningún CSV."""
+    ruta = os.path.join(carpeta_resultados(empresa_id), "ultimo_resultado.json")
     if not os.path.exists(ruta):
         return None
     with open(ruta, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
+def pantalla_sin_datos():
+    """Qué mostrar cuando todavía no hay ningún CSV procesado. El admin
+    puede ir a subir uno (/), pero un empleado no tiene acceso a esa
+    pantalla — mandarlo ahí causaría un redirect infinito (admin_required
+    lo devolvería al dashboard). En vez de eso, a un empleado se le
+    muestra una pantalla de espera."""
+    if session.get("rol") == "admin":
+        flash("Todavía no has subido ningún archivo. Sube un CSV primero.")
+        return redirect(url_for("main.index"))
+    return render_template("sin_datos.html")
+
+
 @main_bp.route("/", methods=["GET"])
+@admin_required
 def index():
     return render_template("index.html")
 
 
 @main_bp.route("/procesar", methods=["POST"])
+@admin_required
 def procesar():
     archivo = request.files.get("archivo")
 
@@ -62,7 +94,7 @@ def procesar():
         return redirect(url_for("main.index"))
 
     nombre_seguro = secure_filename(archivo.filename)
-    ruta_csv = os.path.join(current_app.config["UPLOAD_FOLDER"], nombre_seguro)
+    ruta_csv = os.path.join(carpeta_uploads(session["empresa_id"]), nombre_seguro)
     archivo.save(ruta_csv)
 
     # Presupuesto opcional: si el usuario lo deja vacío o pone algo
@@ -80,7 +112,7 @@ def procesar():
 
     try:
         resultado = ejecutar_sistema(
-            ruta_csv, current_app.config["RESULTADOS_FOLDER"],
+            ruta_csv, carpeta_resultados(session["empresa_id"]),
             presupuesto_capital_trabajo=presupuesto
         )
     except ValueError as e:
@@ -90,7 +122,7 @@ def procesar():
         flash(f"Ocurrió un error inesperado procesando el archivo: {e}")
         return redirect(url_for("main.index"))
 
-    guardar_ultimo_resultado(resultado)
+    guardar_ultimo_resultado(resultado, session["empresa_id"])
 
     # Después de procesar, se manda directo al dashboard (la pantalla
     # que vería un usuario real). La pantalla técnica queda disponible
@@ -99,12 +131,13 @@ def procesar():
 
 
 @main_bp.route("/desarrollo", methods=["GET"])
+@admin_required
 def desarrollo():
     """Pantalla técnica: comparación de modelos, métricas, importancia
     de características, segmentación. Pensada para desarrollo/validación,
     no para el usuario final del sistema."""
 
-    resultado = cargar_ultimo_resultado()
+    resultado = cargar_ultimo_resultado(session["empresa_id"])
 
     if resultado is None:
         flash("Todavía no has subido ningún archivo. Sube un CSV primero.")
@@ -114,31 +147,142 @@ def desarrollo():
 
 
 @main_bp.route("/dashboard", methods=["GET"])
+@login_required
 def dashboard():
     """Pantalla real del sistema: solo la demanda pronosticada del
     próximo mes por producto, sin tecnicismos de modelos ni métricas."""
 
-    resultado = cargar_ultimo_resultado()
+    resultado = cargar_ultimo_resultado(session["empresa_id"])
 
     if resultado is None:
-        flash("Todavía no has subido ningún archivo. Sube un CSV primero.")
-        return redirect(url_for("main.index"))
+        return pantalla_sin_datos()
 
     return render_template("dashboard.html", r=resultado)
 
 
+@main_bp.route("/presupuesto", methods=["GET"])
+@login_required
+def presupuesto():
+    """Pantalla de reposición, presupuesto y costos: qué pedir, cuándo,
+    y cuánto cuesta — separada del dashboard de demanda para no mezclar
+    "cuánto se va a vender" con "cuánto sale reponerlo"."""
+
+    resultado = cargar_ultimo_resultado(session["empresa_id"])
+
+    if resultado is None:
+        return pantalla_sin_datos()
+
+    return render_template("presupuesto.html", r=resultado)
+
+
+@main_bp.route("/inventario", methods=["GET"])
+@login_required
+def inventario():
+    """Pantalla de estado actual del inventario: cuánto stock hay hoy
+    por producto, cuáles están en alerta y cuánto capital representa,
+    sin mezclarlo con el pronóstico ni con las sugerencias de pedido."""
+
+    resultado = cargar_ultimo_resultado(session["empresa_id"])
+
+    if resultado is None:
+        return pantalla_sin_datos()
+
+    return render_template("inventario.html", r=resultado)
+
+
+@main_bp.route("/pedido", methods=["GET"])
+@login_required
+def pedido():
+    """Pantalla de acción: de los productos en alerta, cuáles ya se
+    pidieron (con proveedor elegido, quién y cuándo) y cuáles siguen
+    pendientes de confirmar. El historial de pedidos vive aparte del
+    análisis (pedidos.json) — subir un CSV nuevo no borra lo que ya se
+    pidió."""
+
+    resultado = cargar_ultimo_resultado(session["empresa_id"])
+    if resultado is None:
+        return pantalla_sin_datos()
+
+    pedidos = cargar_pedidos(session["empresa_id"])
+    alertas = [fila for fila in resultado["reorder"] if fila["ordenar"] == "SI"]
+
+    pendientes = []
+    confirmados = []
+    for fila in alertas:
+        pid = str(fila["producto_id"])
+        if pid in pedidos:
+            confirmados.append({**fila, **pedidos[pid]})
+        else:
+            pendientes.append(fila)
+
+    pendientes.sort(key=lambda f: f.get("costo_estimado_pedido") or 0, reverse=True)
+    confirmados.sort(key=lambda f: f.get("fecha_hora", ""), reverse=True)
+
+    return render_template("pedido.html", r=resultado, pendientes=pendientes, confirmados=confirmados)
+
+
+@main_bp.route("/pedido/confirmar", methods=["POST"])
+@login_required
+def pedido_confirmar():
+    resultado = cargar_ultimo_resultado(session["empresa_id"])
+    if resultado is None:
+        flash("Todavía no has subido ningún archivo. Sube un CSV primero.")
+        return redirect(url_for("main.index"))
+
+    productos_por_id = {str(fila["producto_id"]): fila for fila in resultado["reorder"]}
+    seleccionados = request.form.getlist("confirmar")
+
+    if not seleccionados:
+        flash("No seleccionaste ningún producto para confirmar.")
+        return redirect(url_for("main.pedido"))
+
+    usuario = session.get("nombre") or session.get("username") or "Desconocido"
+    confirmados_ahora = 0
+    for producto_id in seleccionados:
+        fila = productos_por_id.get(producto_id)
+        if fila is None:
+            continue
+        # La cantidad y el costo se toman del análisis vigente (fila),
+        # no de lo que venga en el formulario: el usuario elige el
+        # proveedor, pero no debería poder alterar cantidades ni costos
+        # a mano.
+        proveedor = request.form.get(f"proveedor_{producto_id}") or "Sin especificar"
+        registrar_pedido(
+            empresa_id=session["empresa_id"],
+            producto_id=producto_id,
+            proveedor=proveedor,
+            cantidad=fila.get("cantidad_sugerida_pedido"),
+            costo=fila.get("costo_estimado_pedido"),
+            usuario=usuario,
+        )
+        confirmados_ahora += 1
+
+    flash(f"Se confirmaron {confirmados_ahora} pedido(s).")
+    return redirect(url_for("main.pedido"))
+
+
+@main_bp.route("/pedido/deshacer/<producto_id>", methods=["POST"])
+@login_required
+def pedido_deshacer(producto_id):
+    quitar_pedido(session["empresa_id"], producto_id)
+    flash("Se deshizo la confirmación del pedido.")
+    return redirect(url_for("main.pedido"))
+
+
 @main_bp.route("/descargar/<nombre_archivo>")
+@admin_required
 def descargar(nombre_archivo):
     return send_from_directory(
-        current_app.config["RESULTADOS_FOLDER"],
+        carpeta_resultados(session["empresa_id"]),
         nombre_archivo,
         as_attachment=True
     )
 
 
 @main_bp.route("/imagenes/<nombre_archivo>")
+@admin_required
 def imagenes(nombre_archivo):
     return send_from_directory(
-        current_app.config["RESULTADOS_FOLDER"],
+        carpeta_resultados(session["empresa_id"]),
         nombre_archivo
     )

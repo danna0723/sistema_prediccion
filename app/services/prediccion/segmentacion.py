@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from app.services.prediccion.utils import nan_a_none
+
 
 def _valor_mas_frecuente(serie):
     serie = serie.dropna()
@@ -71,7 +73,10 @@ def calcular_comportamiento_producto(df, df_mensual):
     # producto no cambia mes a mes, pero si el CSV tiene alguna fila
     # inconsistente, la moda es más representativa que quedarse con
     # cualquier fila al azar.
-    columnas_etiqueta = [c for c in ["categoria", "nombre_producto"] if c in df.columns]
+    columnas_etiqueta = [
+        c for c in ["categoria", "nombre_producto", "proveedor_principal", "proveedor_alterno"]
+        if c in df.columns
+    ]
     if columnas_etiqueta:
         etiquetas_producto = (
             df.groupby("producto_id")[columnas_etiqueta]
@@ -81,12 +86,10 @@ def calcular_comportamiento_producto(df, df_mensual):
         producto_comportamiento = producto_comportamiento.merge(
             etiquetas_producto, on="producto_id", how="left"
         )
-    for col in ["categoria", "nombre_producto"]:
+    columnas_texto_opcionales = ["categoria", "nombre_producto", "proveedor_principal", "proveedor_alterno"]
+    for col in columnas_texto_opcionales:
         if col not in producto_comportamiento.columns:
             producto_comportamiento[col] = None
-        else:
-            producto_comportamiento[col] = producto_comportamiento[col].where(
-                producto_comportamiento[col].notna(), None
-            )
+    producto_comportamiento = nan_a_none(producto_comportamiento, columnas_texto_opcionales)
 
     return producto_comportamiento

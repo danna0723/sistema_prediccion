@@ -28,7 +28,11 @@ def cargar_y_limpiar(ruta_archivo):
         "Lead_time_Semana": "lead_time_semanas",
         "Costo_pedido": "costo_pedido",
         "Costo_unitario": "costo_unitario",
-        "Porcentaje_costo_mantenimiento": "porcentaje_costo_mantenimiento"
+        "Porcentaje_costo_mantenimiento": "porcentaje_costo_mantenimiento",
+        "Supplier": "proveedor_principal", "Proveedor": "proveedor_principal",
+        "Proveedor_Principal": "proveedor_principal",
+        "Alternate_Supplier": "proveedor_alterno", "Proveedor_Alterno": "proveedor_alterno",
+        "Proveedor_Alternativo": "proveedor_alterno",
     })
 
     required_columns = ["fecha", "producto_id", "demanda"]

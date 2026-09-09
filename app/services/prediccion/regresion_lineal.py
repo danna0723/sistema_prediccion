@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 
@@ -10,6 +12,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 import statsmodels.api as sm
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.tools.sm_exceptions import SingularMatrixWarning
 
 
 # ============================================================
@@ -53,10 +56,20 @@ def _seleccionar_features_regresion(X_train, y_train, max_p_valor=0.05, max_vif=
 
         while len(seleccionadas) > 1:
             X_sm = sm.add_constant(X_train_esc[seleccionadas])
-            vif = pd.DataFrame({
-                "feature": seleccionadas,
-                "VIF": [variance_inflation_factor(X_sm.values, i + 1) for i in range(len(seleccionadas))]
-            })
+            # Cuando una variable queda casi/perfectamente colineal con
+            # otras (esperable a mitad del proceso de poda), statsmodels
+            # avisa con SingularMatrixWarning/UserWarning en cada columna
+            # que evalúa. No indican un error: es justo la situación que
+            # el bloque de abajo detecta (VIF infinito/NaN) y corrige
+            # descartando esa variable — se silencian para no llenar la
+            # consola con avisos de algo que ya se maneja a propósito.
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=SingularMatrixWarning)
+                warnings.simplefilter("ignore", category=UserWarning)
+                vif = pd.DataFrame({
+                    "feature": seleccionadas,
+                    "VIF": [variance_inflation_factor(X_sm.values, i + 1) for i in range(len(seleccionadas))]
+                })
 
             # La colinealidad se resuelve antes de mirar p-valores: con
             # VIF infinito/NaN la matriz de diseño es singular (colinealidad
