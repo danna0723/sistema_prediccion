@@ -11,16 +11,19 @@ def _valor_mas_frecuente(serie):
 
 # EXTENSIÓN PROPIA — no viene de ninguno de los 4 ejemplos de referencia.
 # Ninguno de los 4 ejemplos clasifica productos por importancia (ABC) ni
-# decide por producto si conviene usar ML o un baseline simple; esa
-# decisión (usar_ml) es la que hace que el sistema no dependa ciegamente
-# de XGBoost para todo el catálogo (ver conversación de metodología).
+# variabilidad. Acá se usa como segmentación descriptiva para el
+# dashboard — qué tan importante es cada producto y qué tan errático es
+# su consumo — mientras que la elección de QUÉ MÉTODO pronostica cada
+# producto se decide aparte, de forma empírica, en
+# modelos.py::elegir_campeon_por_producto (mide el error de backtest de
+# los tres métodos por producto y usa el que ganó), no con una regla
+# fija basada en esta clasificación.
 def calcular_comportamiento_producto(df, df_mensual):
     """
     Clasifica cada producto por importancia (ABC, según % acumulado de
-    demanda) y por variabilidad (coeficiente de variación), decide si
-    conviene pronosticarlo con XGBoost o con Media Móvil (usar_ml), y le
-    agrega etiquetas descriptivas (categoría, nombre) para el dashboard —
-    esto último tampoco viene de los ejemplos, es una mejora de usabilidad
+    demanda) y por variabilidad (coeficiente de variación), y le agrega
+    etiquetas descriptivas (categoría, nombre) para el dashboard — esto
+    último tampoco viene de los ejemplos, es una mejora de usabilidad
     propia (los productos del CSV original solo tienen un ID numérico).
     """
     producto_comportamiento = (
@@ -60,10 +63,6 @@ def calcular_comportamiento_producto(df, df_mensual):
             return "C"
 
     producto_comportamiento["categoria_abc"] = producto_comportamiento["demanda_acumulada_pct"].apply(clasificar_abc)
-    producto_comportamiento["usar_ml"] = (
-        producto_comportamiento["categoria_abc"].isin(["A", "B"])
-        | (producto_comportamiento["variabilidad"] == "Alta")
-    )
 
     # Etiquetas descriptivas del producto (categoría y, si el CSV la
     # trae, nombre). Los productos solo tienen un ID numérico — sin

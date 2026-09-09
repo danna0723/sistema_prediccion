@@ -33,8 +33,14 @@ HORIZONTE_MESES = 3
 # distinto por horizonte (con ~12 meses de historia, partir los datos
 # en más subconjuntos los haría aún más chicos). El costo es que el
 # error se puede ir acumulando de un mes a otro.
-def generar_pronostico_futuro(df_mensual, producto_comportamiento, model, feature_cols):
+def generar_pronostico_futuro(df_mensual, producto_comportamiento, model, feature_cols, modelo_lr, features_lr):
     """
+    modelo_lr/features_lr: el modelo de Regresión Lineal ya entrenado
+    (regresion_lineal.py) y las variables que usa — se necesitan acá
+    porque "metodo_campeon" (producto_comportamiento, calculado en
+    modelos.py::elegir_campeon_por_producto) puede ser "Regresión
+    Lineal" para algunos productos, no solo XGBoost o Media Móvil.
+
     Devuelve (pronostico_futuro_df, pronostico_pivot,
     meses_pronosticados, meses_pronosticados_legibles).
     """
@@ -128,18 +134,40 @@ def generar_pronostico_futuro(df_mensual, producto_comportamiento, model, featur
 
         X_futuro_lote = pd.DataFrame(filas_features)[feature_cols]
         preds_xgb_lote = np.maximum(np.expm1(model.predict(X_futuro_lote)), 0)
+        preds_lr_lote = np.maximum(modelo_lr.predict(X_futuro_lote[features_lr]), 0)
 
-        for (producto, media_movil_3), pred_xgb_futuro in zip(metadatos, preds_xgb_lote):
+        for (producto, media_movil_3), pred_xgb_futuro, pred_lr_futuro in zip(metadatos, preds_xgb_lote, preds_lr_lote):
             estado = estado_por_producto[producto]
             segmento = estado["segmento"]
 
             pred_xgb_futuro = float(pred_xgb_futuro)
+            pred_lr_futuro = float(pred_lr_futuro)
             pred_baseline_futuro = float(max(media_movil_3, 0))
 
-            usar_ml_producto = bool(segmento["usar_ml"])
-            if media_movil_3 > 0 and pred_xgb_futuro < media_movil_3 * 0.5:
-                usar_ml_producto = False
-            pred_final_futuro = pred_xgb_futuro if usar_ml_producto else pred_baseline_futuro
+            predicciones_por_metodo = {
+                "Media móvil": pred_baseline_futuro,
+                "Regresión Lineal": pred_lr_futuro,
+                "XGBoost": pred_xgb_futuro,
+            }
+
+            # Salvaguarda: en un pronóstico recursivo el error se puede
+            # ir acumulando de un mes a otro (a diferencia del backtest,
+            # acá no hay demanda real contra la cual verificar). Si el
+            # método campeón de este producto es un modelo (no la Media
+            # Móvil) y su predicción se desploma a menos de la mitad del
+            # nivel reciente, no se confía en ese número — se usa la
+            # Media Móvil para ese mes en su lugar.
+            metodo_campeon = segmento["metodo_campeon"]
+            if (
+                metodo_campeon != "Media móvil"
+                and media_movil_3 > 0
+                and predicciones_por_metodo[metodo_campeon] < media_movil_3 * 0.5
+            ):
+                metodo_usado = "Media móvil"
+            else:
+                metodo_usado = metodo_campeon
+
+            pred_final_futuro = predicciones_por_metodo[metodo_usado]
 
             pronostico_futuro.append({
                 "producto_id": producto,
@@ -148,9 +176,10 @@ def generar_pronostico_futuro(df_mensual, producto_comportamiento, model, featur
                 "mes_pronosticado": mes_objetivo.strftime("%Y-%m"),
                 "horizonte": h + 1,
                 "prediccion_xgboost": round(pred_xgb_futuro, 2),
+                "prediccion_regresion_lineal": round(pred_lr_futuro, 2),
                 "prediccion_baseline": round(pred_baseline_futuro, 2),
                 "prediccion_final": round(pred_final_futuro, 2),
-                "metodo_usado": "XGBoost" if usar_ml_producto else "Media móvil",
+                "metodo_usado": metodo_usado,
             })
 
             # La predicción de este mes alimenta los lags del siguiente

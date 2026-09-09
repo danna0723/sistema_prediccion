@@ -35,8 +35,8 @@ def prediccion_baseline_movil(test_df):
     """
     Ejemplo 1: baseline de Media Móvil (equivalente a la "4-wk Moving
     Average" del notebook de referencia, aquí a 3 meses) — se usa tanto
-    de piso de comparación en la tabla de métricas como de método de
-    respaldo real del pronóstico (ver "usar_ml" en segmentacion.py).
+    de piso de comparación en la tabla de métricas como candidata en la
+    selección de campeón por producto (elegir_campeon_por_producto).
     """
     return np.maximum(test_df["media_movil_3"].values, 0)
 
@@ -79,29 +79,56 @@ def benchmarking_modelos(y_test, pred_baseline_3, pred_lr, pred_xgb):
     ])
 
 
-def construir_tabla_predicciones(test_df, pred_xgb, pred_baseline_3):
-    """
-    EXTENSIÓN PROPIA — ningún ejemplo mezcla modelos por producto según
-    su comportamiento (categoria_abc/variabilidad); ahí siempre se usa
-    "el mejor modelo" para todo el catálogo (ver Ejemplo 1: "Use XGBoost
-    forecasts (best model); fall back to ARIMA"). Acá, en cambio, la
-    elección es por producto vía "usar_ml" (segmentacion.py).
+COLUMNA_PREDICCION_POR_METODO = {
+    "Media móvil": "prediccion_media_movil",
+    "Regresión Lineal": "prediccion_regresion_lineal",
+    "XGBoost": "prediccion_xgboost",
+}
 
-    Arma la tabla de predicciones de backtest (últimos 3 meses reales)
-    combinando XGBoost o Media Móvil según "usar_ml" por producto, y
-    calcula el MAPE/WAPE globales de esa predicción combinada.
 
-    Devuelve (resultados_prediccion, mape_final, wape_final).
+# EXTENSIÓN PROPIA — ningún ejemplo elige el método por producto; ahí
+# siempre se usa "el mejor modelo" para todo el catálogo (ver Ejemplo 1:
+# "Use XGBoost forecasts (best model); fall back to ARIMA"). Acá, en
+# cambio, se mide el error de backtest de los TRES métodos para cada
+# producto por separado, y gana el que menos se equivocó en ESE
+# producto — reemplaza la heurística anterior basada en categoría
+# ABC/variabilidad (que solo elegía entre XGBoost y Media Móvil) por
+# una selección empírica de a tres, respaldada en los datos.
+def elegir_campeon_por_producto(resultados_prediccion):
     """
-    resultados_prediccion = test_df[["fecha", "producto_id", "demanda", "categoria_abc", "variabilidad", "usar_ml"]].copy()
-    resultados_prediccion["prediccion_xgboost"] = pred_xgb
-    resultados_prediccion["prediccion_baseline_3m"] = pred_baseline_3
-    resultados_prediccion["prediccion_final"] = np.where(
-        resultados_prediccion["usar_ml"],
-        resultados_prediccion["prediccion_xgboost"],
-        resultados_prediccion["prediccion_baseline_3m"]
+    Devuelve una Series indexada por producto_id con el nombre del
+    método ("Media móvil"/"Regresión Lineal"/"XGBoost") que tuvo menor
+    MAE para ese producto en los meses de backtest.
+    """
+    errores_por_producto = resultados_prediccion.groupby("producto_id").apply(
+        lambda g: pd.Series({
+            metodo: mean_absolute_error(g["demanda"], g[columna])
+            for metodo, columna in COLUMNA_PREDICCION_POR_METODO.items()
+        }),
+        include_groups=False,
     )
-    resultados_prediccion["metodo_usado"] = np.where(resultados_prediccion["usar_ml"], "XGBoost", "Media móvil")
+    return errores_por_producto.idxmin(axis=1)
+
+
+def construir_tabla_predicciones(test_df, pred_baseline_3, pred_lr, pred_xgb):
+    """
+    Arma la tabla de predicciones de backtest (últimos 3 meses reales)
+    con las tres predicciones lado a lado, elige el método campeón por
+    producto (elegir_campeon_por_producto) y calcula el MAPE/WAPE
+    globales de esa predicción combinada.
+
+    Devuelve (resultados_prediccion, mape_final, wape_final, metodo_campeon).
+    """
+    resultados_prediccion = test_df[["fecha", "producto_id", "demanda", "categoria_abc", "variabilidad"]].copy()
+    resultados_prediccion["prediccion_media_movil"] = pred_baseline_3
+    resultados_prediccion["prediccion_regresion_lineal"] = pred_lr
+    resultados_prediccion["prediccion_xgboost"] = pred_xgb
+
+    metodo_campeon = elegir_campeon_por_producto(resultados_prediccion)
+    resultados_prediccion["metodo_usado"] = resultados_prediccion["producto_id"].map(metodo_campeon)
+    resultados_prediccion["prediccion_final"] = resultados_prediccion.apply(
+        lambda fila: fila[COLUMNA_PREDICCION_POR_METODO[fila["metodo_usado"]]], axis=1
+    )
     resultados_prediccion["error_final"] = resultados_prediccion["prediccion_final"] - resultados_prediccion["demanda"]
 
     mask_no_cero = resultados_prediccion["demanda"] > 0
@@ -118,4 +145,4 @@ def construir_tabla_predicciones(test_df, pred_xgb, pred_baseline_3):
         resultados_prediccion["prediccion_final"].values
     )
 
-    return resultados_prediccion, mape_final, wape_final
+    return resultados_prediccion, mape_final, wape_final, metodo_campeon

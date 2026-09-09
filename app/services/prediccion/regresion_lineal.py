@@ -105,9 +105,14 @@ def _seleccionar_features_regresion(X_train, y_train, max_p_valor=0.05, max_vif=
 
 def entrenar_regresion_lineal(X_train, y_train, X_test, feature_cols):
     """
-    Entrena la Regresión Lineal de benchmark (Ejemplo 4) solo con las
-    variables que sobrevivieron RFE + eliminación stepwise (p-valor/VIF).
-    Devuelve (pred_lr, features_lr).
+    Entrena la Regresión Lineal (Ejemplo 4) solo con las variables que
+    sobrevivieron RFE + eliminación stepwise (p-valor/VIF). Además de
+    servir de benchmark en la tabla comparativa, el modelo entrenado se
+    devuelve para poder reutilizarlo en el pronóstico real a futuro si
+    resulta ser el método campeón de algún producto (ver
+    elegir_campeon_por_producto en modelos.py).
+
+    Devuelve (modelo_lr, pred_lr, features_lr).
     """
     features_lr = _seleccionar_features_regresion(X_train, y_train)
     if not features_lr:
@@ -118,4 +123,4 @@ def entrenar_regresion_lineal(X_train, y_train, X_test, feature_cols):
     pred_lr = modelo_lr.predict(X_test[features_lr])
     pred_lr = np.maximum(pred_lr, 0)
 
-    return pred_lr, features_lr
+    return modelo_lr, pred_lr, features_lr

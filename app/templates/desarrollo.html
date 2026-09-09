@@ -85,8 +85,8 @@
                         <thead>
                             <tr>
                                 <th>Fecha</th><th>Producto</th><th>Demanda real</th>
-                                <th>Predicción XGBoost</th><th>Predicción Media Móvil</th>
-                                <th>Predicción Final</th><th>Método</th>
+                                <th>Predicción XGBoost</th><th>Predicción Regresión Lineal</th><th>Predicción Media Móvil</th>
+                                <th>Predicción Final</th><th>Método campeón</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -96,7 +96,8 @@
                                 <td>{{ fila.producto_id }}</td>
                                 <td>{{ fila.demanda }}</td>
                                 <td>{{ fila.prediccion_xgboost }}</td>
-                                <td>{{ fila.prediccion_baseline_3m }}</td>
+                                <td>{{ fila.prediccion_regresion_lineal }}</td>
+                                <td>{{ fila.prediccion_media_movil }}</td>
                                 <td>{{ fila.prediccion_final }}</td>
                                 <td>{{ fila.metodo_usado }}</td>
                             </tr>

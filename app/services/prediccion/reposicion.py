@@ -166,7 +166,7 @@ def calcular_tabla_reorden(
             "proveedor_alterno": segmento.get("proveedor_alterno"),
             "categoria_abc": segmento["categoria_abc"],
             "variabilidad": segmento["variabilidad"],
-            "metodo_pronostico": "XGBoost" if segmento["usar_ml"] else "Media móvil",
+            "metodo_pronostico": segmento["metodo_campeon"],
             "demanda_promedio_mensual_pronosticada": round(demanda_promedio, 2),
             "lead_time_semanas": round(lead_time_meses * 4.345, 1),
             "lead_time_meses": round(lead_time_meses, 2),

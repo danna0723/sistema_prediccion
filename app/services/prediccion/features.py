@@ -12,7 +12,7 @@ def construir_features(df_mensual, producto_comportamiento):
     Devuelve (df_mensual, df_model, feature_cols).
     """
     df_mensual = df_mensual.merge(
-        producto_comportamiento[["producto_id", "categoria_abc", "variabilidad", "usar_ml"]],
+        producto_comportamiento[["producto_id", "categoria_abc", "variabilidad"]],
         on="producto_id", how="left"
     )
 
@@ -32,11 +32,7 @@ def construir_features(df_mensual, producto_comportamiento):
     df_mensual["mes_sin"] = np.sin(2 * np.pi * df_mensual["mes"] / 12)
     df_mensual["mes_cos"] = np.cos(2 * np.pi * df_mensual["mes"] / 12)
 
-    # Ejemplo 1 (SKU Demand Forecasting): mismo principio de feature
-    # engineering ("Lag features" + "Rolling statistics") que build_features()
-    # en el notebook de referencia, adaptado a periodicidad mensual en vez
-    # de semanal (lag_1w..lag_52w / roll_mean_4w,12w -> lag_1..lag_6 /
-    # media_movil_3,6).
+    # Ejemplo 1 (SKU Demand Forecasting)
     df_mensual["lag_1"] = df_mensual.groupby("producto_id")["demanda"].shift(1)
     df_mensual["lag_2"] = df_mensual.groupby("producto_id")["demanda"].shift(2)
     df_mensual["lag_3"] = df_mensual.groupby("producto_id")["demanda"].shift(3)
@@ -52,10 +48,7 @@ def construir_features(df_mensual, producto_comportamiento):
         lambda x: x.shift(1).rolling(3).std()
     )
 
-    # Ejemplo 3 (Kaggle Grupo Bimbo): mismo principio que las agregaciones
-    # por producto del notebook de referencia (mean_prod/count_prod) —
-    # estadísticas históricas por producto usadas como feature adicional,
-    # aquí llamadas media_producto/desviacion_producto.
+    # Ejemplo 3 (Kaggle Grupo Bimbo):
     stats_cols = ["demanda_total", "media", "desviacion"]
     df_mensual = df_mensual.merge(
         producto_comportamiento[["producto_id"] + stats_cols].rename(

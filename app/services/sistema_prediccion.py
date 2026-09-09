@@ -43,7 +43,7 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
     df = cargar_y_limpiar(ruta_archivo)
     df_mensual = agregar_mensual(df)
 
-    # 2. Segmentación de productos: ABC, variabilidad, usar_ml, etiquetas
+    # 2. Segmentación de productos: ABC, variabilidad, etiquetas
     #    (segmentacion.py)
     producto_comportamiento = calcular_comportamiento_producto(df, df_mensual)
     ruta_segmentacion_grafica = graficar_segmentacion(producto_comportamiento, carpeta_resultados)
@@ -78,13 +78,24 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
 
     # 4. Modelos: Regresión Lineal (regresion_lineal.py — Ejemplo 4),
     #    XGBoost (modelos.py — Ejemplos 1 y 3), Media Móvil (modelos.py — Ejemplo 1)
-    pred_lr, features_lr = entrenar_regresion_lineal(X_train, y_train, X_test, feature_cols)
+    modelo_lr, pred_lr, features_lr = entrenar_regresion_lineal(X_train, y_train, X_test, feature_cols)
     model, pred_xgb = entrenar_xgboost(X_train, y_train_log, X_test)
     pred_baseline_3 = prediccion_baseline_movil(test_df)
 
     resultados = benchmarking_modelos(y_test, pred_baseline_3, pred_lr, pred_xgb)
-    resultados_prediccion, mape_final, wape_final = construir_tabla_predicciones(
-        test_df, pred_xgb, pred_baseline_3
+    resultados_prediccion, mape_final, wape_final, metodo_campeon = construir_tabla_predicciones(
+        test_df, pred_baseline_3, pred_lr, pred_xgb
+    )
+
+    # El campeón por producto (elegir_campeon_por_producto, dentro de
+    # construir_tabla_predicciones) se calcula recién acá, después de
+    # evaluar los tres modelos — se agrega a producto_comportamiento
+    # para que pronostico_futuro.py y reposicion.py lo lean igual que
+    # cualquier otra columna de segmentación. Los productos que por
+    # algún motivo no llegaron a test_df (catálogos muy chicos) quedan
+    # con Media Móvil como respaldo seguro.
+    producto_comportamiento["metodo_campeon"] = (
+        producto_comportamiento["producto_id"].map(metodo_campeon).fillna("Media móvil")
     )
 
     ruta_importancia = graficar_importancia_features(model, feature_cols, carpeta_resultados)
@@ -95,7 +106,9 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
         pronostico_pivot,
         meses_pronosticados,
         meses_pronosticados_legibles,
-    ) = generar_pronostico_futuro(df_mensual, producto_comportamiento, model, feature_cols)
+    ) = generar_pronostico_futuro(
+        df_mensual, producto_comportamiento, model, feature_cols, modelo_lr, features_lr
+    )
 
     # 6. Puntos de reorden y EOQ (reposicion.py — Ejemplos 1 y 2)
     reorder_df, presupuesto_usado, presupuesto_por_producto = calcular_tabla_reorden(
