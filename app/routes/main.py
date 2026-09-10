@@ -1,9 +1,11 @@
 import os
 import json
+import csv
+import io
 
 from flask import (
     Blueprint, render_template, request, redirect,
-    url_for, flash, current_app, send_from_directory, session
+    url_for, flash, current_app, send_from_directory, session, Response
 )
 from werkzeug.utils import secure_filename
 
@@ -158,6 +160,42 @@ def dashboard():
         return pantalla_sin_datos()
 
     return render_template("dashboard.html", r=resultado)
+
+
+@main_bp.route("/reporte-demanda", methods=["GET"])
+@login_required
+def reporte_demanda():
+    """Descarga en CSV la misma tabla que se ve en el dashboard (demanda
+    pronosticada por producto y mes) — disponible tanto para admin como
+    para empleado, a diferencia de /descargar (que es solo para el
+    admin y sirve los archivos técnicos del panel de desarrollo)."""
+    resultado = cargar_ultimo_resultado(session["empresa_id"])
+    if resultado is None:
+        return pantalla_sin_datos()
+
+    buffer = io.StringIO()
+    escritor = csv.writer(buffer)
+    escritor.writerow(
+        ["Producto", "Nombre", "Categoría", *resultado["meses_pronosticados_legibles"], "Total 3 meses"]
+    )
+    for fila in resultado["pronostico_pivot"]:
+        escritor.writerow([
+            fila["producto_id"],
+            fila.get("nombre_producto") or "",
+            fila.get("categoria") or "",
+            *fila["valores"],
+            fila["total"],
+        ])
+
+    # "utf-8-sig" agrega el BOM que Excel necesita para mostrar bien los
+    # acentos y la "ñ" al abrir el CSV directamente (sin el BOM, Excel
+    # en Windows muestra los caracteres especiales mal codificados).
+    contenido = buffer.getvalue().encode("utf-8-sig")
+    return Response(
+        contenido,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=reporte_demanda.csv"}
+    )
 
 
 @main_bp.route("/presupuesto", methods=["GET"])

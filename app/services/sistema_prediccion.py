@@ -15,6 +15,7 @@ from app.services.prediccion.modelos import (
 )
 from app.services.prediccion.pronostico_futuro import generar_pronostico_futuro
 from app.services.prediccion.reposicion import calcular_tabla_reorden
+from app.services.prediccion.validacion import validacion_cruzada_temporal
 from app.services.prediccion.graficas import (
     graficar_segmentacion,
     graficar_importancia_features,
@@ -100,7 +101,17 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
 
     ruta_importancia = graficar_importancia_features(model, feature_cols, carpeta_resultados)
 
-    # 5. Pronóstico recursivo de los próximos 3 meses (pronostico_futuro.py)
+    # 5. Validación cruzada temporal (validacion.py): repite el
+    #    entrenamiento de los tres modelos + la selección de campeón
+    #    contra varios splits por fecha en vez de uno solo, para
+    #    confirmar que el benchmark de arriba no depende de que el
+    #    único período de prueba haya sido fácil o difícil por
+    #    casualidad. No reemplaza el split de producción de arriba —
+    #    es una validación adicional, informativa, que se muestra en
+    #    el panel técnico.
+    detalle_validacion_cruzada, resumen_validacion_cruzada = validacion_cruzada_temporal(df_model, feature_cols)
+
+    # 6. Pronóstico recursivo de los próximos 3 meses (pronostico_futuro.py)
     (
         pronostico_futuro_df,
         pronostico_pivot,
@@ -110,7 +121,7 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
         df_mensual, producto_comportamiento, model, feature_cols, modelo_lr, features_lr
     )
 
-    # 6. Puntos de reorden y EOQ (reposicion.py — Ejemplos 1 y 2)
+    # 7. Puntos de reorden y EOQ (reposicion.py — Ejemplos 1 y 2)
     reorder_df, presupuesto_usado, presupuesto_por_producto = calcular_tabla_reorden(
         df_model, df_mensual, producto_comportamiento, pronostico_futuro_df,
         presupuesto_capital_trabajo=presupuesto_capital_trabajo
@@ -130,11 +141,12 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
     productos_sin_dato_inventario = int(reorder_df["inventario_actual"].isna().sum())
     productos_en_alerta = int((reorder_df["ordenar"] == "SI").sum())
 
-    # 7. Gráficas y exportación de artefactos (graficas.py / exportacion.py)
+    # 8. Gráficas y exportación de artefactos (graficas.py / exportacion.py)
     graficas_metricas = graficar_comparacion_metricas(resultados, carpeta_resultados)
     rutas = guardar_resultados(
         carpeta_resultados, model, feature_cols, resultados_prediccion,
-        resultados, reorder_df, producto_comportamiento, pronostico_futuro_df
+        resultados, reorder_df, producto_comportamiento, pronostico_futuro_df,
+        detalle_validacion_cruzada, resumen_validacion_cruzada
     )
     rutas["importancia"] = ruta_importancia
     rutas["segmentacion_grafica"] = ruta_segmentacion_grafica
@@ -147,6 +159,8 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
         "segmentacion": producto_comportamiento.to_dict(orient="records"),
         "mape_final": None if pd.isna(mape_final) else round(float(mape_final), 2),
         "wape_final": None if pd.isna(wape_final) else round(float(wape_final), 2),
+        "validacion_cruzada_detalle": detalle_validacion_cruzada,
+        "validacion_cruzada_resumen": resumen_validacion_cruzada,
         "pronostico_futuro": pronostico_futuro_df.to_dict(orient="records"),
         "pronostico_pivot": pronostico_pivot,
         "meses_pronosticados": meses_pronosticados,

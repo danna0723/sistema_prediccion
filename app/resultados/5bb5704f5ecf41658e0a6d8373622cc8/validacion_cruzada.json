@@ -1,0 +1,238 @@
+{
+  "detalle_por_fold": [
+    {
+      "fold": 1,
+      "meses_entrenamiento": 4,
+      "periodo_test": "2022-02 a 2022-04",
+      "modelo": "Media móvil",
+      "mae": 39.72,
+      "rmse": 145.0,
+      "mape": 84.8,
+      "wape": 20.69
+    },
+    {
+      "fold": 1,
+      "meses_entrenamiento": 4,
+      "periodo_test": "2022-02 a 2022-04",
+      "modelo": "Regresión Lineal",
+      "mae": 61.26,
+      "rmse": 272.99,
+      "mape": 120.65,
+      "wape": 31.91
+    },
+    {
+      "fold": 1,
+      "meses_entrenamiento": 4,
+      "periodo_test": "2022-02 a 2022-04",
+      "modelo": "XGBoost",
+      "mae": 42.15,
+      "rmse": 180.66,
+      "mape": 67.58,
+      "wape": 21.96
+    },
+    {
+      "fold": 1,
+      "meses_entrenamiento": 4,
+      "periodo_test": "2022-02 a 2022-04",
+      "modelo": "Sistema final",
+      "mae": 33.44,
+      "rmse": 138.96,
+      "mape": 61.71,
+      "wape": 17.42
+    },
+    {
+      "fold": 2,
+      "meses_entrenamiento": 5,
+      "periodo_test": "2022-03 a 2022-05",
+      "modelo": "Media móvil",
+      "mae": 44.3,
+      "rmse": 213.82,
+      "mape": 82.02,
+      "wape": 22.36
+    },
+    {
+      "fold": 2,
+      "meses_entrenamiento": 5,
+      "periodo_test": "2022-03 a 2022-05",
+      "modelo": "Regresión Lineal",
+      "mae": 56.7,
+      "rmse": 261.63,
+      "mape": 102.76,
+      "wape": 28.62
+    },
+    {
+      "fold": 2,
+      "meses_entrenamiento": 5,
+      "periodo_test": "2022-03 a 2022-05",
+      "modelo": "XGBoost",
+      "mae": 47.0,
+      "rmse": 235.43,
+      "mape": 62.08,
+      "wape": 23.73
+    },
+    {
+      "fold": 2,
+      "meses_entrenamiento": 5,
+      "periodo_test": "2022-03 a 2022-05",
+      "modelo": "Sistema final",
+      "mae": 35.69,
+      "rmse": 176.61,
+      "mape": 58.03,
+      "wape": 18.02
+    },
+    {
+      "fold": 3,
+      "meses_entrenamiento": 6,
+      "periodo_test": "2022-04 a 2022-06",
+      "modelo": "Media móvil",
+      "mae": 48.79,
+      "rmse": 243.65,
+      "mape": 80.32,
+      "wape": 23.86
+    },
+    {
+      "fold": 3,
+      "meses_entrenamiento": 6,
+      "periodo_test": "2022-04 a 2022-06",
+      "modelo": "Regresión Lineal",
+      "mae": 56.43,
+      "rmse": 276.41,
+      "mape": 95.3,
+      "wape": 27.6
+    },
+    {
+      "fold": 3,
+      "meses_entrenamiento": 6,
+      "periodo_test": "2022-04 a 2022-06",
+      "modelo": "XGBoost",
+      "mae": 50.59,
+      "rmse": 254.82,
+      "mape": 65.12,
+      "wape": 24.74
+    },
+    {
+      "fold": 3,
+      "meses_entrenamiento": 6,
+      "periodo_test": "2022-04 a 2022-06",
+      "modelo": "Sistema final",
+      "mae": 39.6,
+      "rmse": 207.14,
+      "mape": 57.63,
+      "wape": 19.37
+    }
+  ],
+  "resumen": [
+    {
+      "modelo": "Media móvil",
+      "metrica": "MAE",
+      "promedio": 44.27,
+      "desvio": 3.7,
+      "folds": 3
+    },
+    {
+      "modelo": "Media móvil",
+      "metrica": "RMSE",
+      "promedio": 200.82,
+      "desvio": 41.31,
+      "folds": 3
+    },
+    {
+      "modelo": "Media móvil",
+      "metrica": "MAPE (%)",
+      "promedio": 82.38,
+      "desvio": 1.85,
+      "folds": 3
+    },
+    {
+      "modelo": "Media móvil",
+      "metrica": "WAPE (%)",
+      "promedio": 22.31,
+      "desvio": 1.29,
+      "folds": 3
+    },
+    {
+      "modelo": "Regresión Lineal",
+      "metrica": "MAE",
+      "promedio": 58.13,
+      "desvio": 2.21,
+      "folds": 3
+    },
+    {
+      "modelo": "Regresión Lineal",
+      "metrica": "RMSE",
+      "promedio": 270.35,
+      "desvio": 6.32,
+      "folds": 3
+    },
+    {
+      "modelo": "Regresión Lineal",
+      "metrica": "MAPE (%)",
+      "promedio": 106.24,
+      "desvio": 10.64,
+      "folds": 3
+    },
+    {
+      "modelo": "Regresión Lineal",
+      "metrica": "WAPE (%)",
+      "promedio": 29.38,
+      "desvio": 1.84,
+      "folds": 3
+    },
+    {
+      "modelo": "XGBoost",
+      "metrica": "MAE",
+      "promedio": 46.58,
+      "desvio": 3.46,
+      "folds": 3
+    },
+    {
+      "modelo": "XGBoost",
+      "metrica": "RMSE",
+      "promedio": 223.64,
+      "desvio": 31.4,
+      "folds": 3
+    },
+    {
+      "modelo": "XGBoost",
+      "metrica": "MAPE (%)",
+      "promedio": 64.93,
+      "desvio": 2.25,
+      "folds": 3
+    },
+    {
+      "modelo": "XGBoost",
+      "metrica": "WAPE (%)",
+      "promedio": 23.48,
+      "desvio": 1.15,
+      "folds": 3
+    },
+    {
+      "modelo": "Sistema final",
+      "metrica": "MAE",
+      "promedio": 36.25,
+      "desvio": 2.54,
+      "folds": 3
+    },
+    {
+      "modelo": "Sistema final",
+      "metrica": "RMSE",
+      "promedio": 174.24,
+      "desvio": 27.89,
+      "folds": 3
+    },
+    {
+      "modelo": "Sistema final",
+      "metrica": "MAPE (%)",
+      "promedio": 59.12,
+      "desvio": 1.84,
+      "folds": 3
+    },
+    {
+      "modelo": "Sistema final",
+      "metrica": "WAPE (%)",
+      "promedio": 18.27,
+      "desvio": 0.81,
+      "folds": 3
+    }
+  ]
+}

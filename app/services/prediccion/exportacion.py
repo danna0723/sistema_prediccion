@@ -7,7 +7,8 @@ import json
 # referencia en particular.
 def guardar_resultados(
     carpeta_resultados, model, feature_cols, resultados_prediccion,
-    resultados, reorder_df, producto_comportamiento, pronostico_futuro_df
+    resultados, reorder_df, producto_comportamiento, pronostico_futuro_df,
+    validacion_cruzada_detalle, validacion_cruzada_resumen
 ):
     """Guarda en disco los artefactos del pipeline y devuelve el dict de rutas."""
     ruta_modelo = os.path.join(carpeta_resultados, "modelo_xgboost_demanda.json")
@@ -32,6 +33,13 @@ def guardar_resultados(
     ruta_pronostico_futuro = os.path.join(carpeta_resultados, "pronostico_futuro.csv")
     pronostico_futuro_df.to_csv(ruta_pronostico_futuro, index=False)
 
+    ruta_validacion_cruzada = os.path.join(carpeta_resultados, "validacion_cruzada.json")
+    with open(ruta_validacion_cruzada, "w", encoding="utf-8") as f:
+        json.dump(
+            {"detalle_por_fold": validacion_cruzada_detalle, "resumen": validacion_cruzada_resumen},
+            f, ensure_ascii=False, indent=2
+        )
+
     return {
         "modelo": ruta_modelo,
         "features": ruta_features,
@@ -40,4 +48,5 @@ def guardar_resultados(
         "reorder": ruta_reorder,
         "segmentacion": ruta_segmentacion,
         "pronostico_futuro": ruta_pronostico_futuro,
+        "validacion_cruzada": ruta_validacion_cruzada,
     }

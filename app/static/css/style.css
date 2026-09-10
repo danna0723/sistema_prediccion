@@ -11,16 +11,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
 :root {
-    --md-bg: #131320;
-    --md-bg-alt: #1b1b2e;
-    --md-card-bg: #1e1e30;
-    --md-card-border: rgba(255, 255, 255, .06);
+    --md-bg: #040404;
+    --md-bg-alt: #000000;
+    --md-card-bg: #080808;
+    --md-card-border: rgba(46, 12, 12, 0.06);
     --md-primary: #e91e63;
     --md-primary-dark: #c2185b;
     --md-cyan: #17c1e8;
     --md-success: #2dce89;
-    --md-text: #f5f5fa;
-    --md-text-muted: #9a9ab5;
+    --md-text: #f5f5f5;
+    --md-text-muted: #a8a8a8;
     --md-border: rgba(255, 255, 255, .08);
     --md-card-radius: 1rem;
     --md-card-shadow: 0 8px 26px -6px rgba(0, 0, 0, .5);
