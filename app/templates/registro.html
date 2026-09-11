@@ -22,7 +22,7 @@
         <img src="{{ static_url('img/logo-icono.png') }}" alt="Thary">
       </div>
       <h4 class="login-title">Crear cuenta</h4>
-      <p class="login-subtitle">Completá tus datos para registrarte</p>
+      <p class="login-subtitle">Completa tus datos para registrarte</p>
 
       {% with mensajes = get_flashed_messages() %}
         {% if mensajes %}
@@ -65,8 +65,8 @@
       </form>
 
       <p class="login-footer">
-        ¿Ya tenés cuenta?
-        <a href="{{ url_for('auth.login') }}">Iniciá sesión</a>
+        ¿Ya tienes cuenta?
+        <a href="{{ url_for('auth.login') }}">Inicia sesión</a>
       </p>
     </div>
   </div>

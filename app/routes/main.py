@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 from app.services.sistema_prediccion import ejecutar_sistema
 from app.services.auth import admin_required, login_required
 from app.services.pedidos import cargar_pedidos, registrar_pedido, quitar_pedido
+from app.services.perfil_empresa import cargar_nombre_empresa, guardar_nombre_empresa
 
 main_bp = Blueprint("main", __name__)
 
@@ -79,6 +80,8 @@ def pantalla_sin_datos():
 @main_bp.route("/", methods=["GET"])
 @admin_required
 def index():
+    # nombre_empresa ya llega al template vía el context processor
+    # global (app/__init__.py), que lo usa también en el sidebar.
     return render_template("index.html")
 
 
@@ -98,6 +101,8 @@ def procesar():
     nombre_seguro = secure_filename(archivo.filename)
     ruta_csv = os.path.join(carpeta_uploads(session["empresa_id"]), nombre_seguro)
     archivo.save(ruta_csv)
+
+    guardar_nombre_empresa(session["empresa_id"], request.form.get("nombre_empresa"))
 
     # Presupuesto opcional: si el usuario lo deja vacío o pone algo
     # inválido, ejecutar_sistema cae a su valor por defecto en vez de
@@ -175,6 +180,12 @@ def reporte_demanda():
 
     buffer = io.StringIO()
     escritor = csv.writer(buffer)
+
+    nombre_empresa = cargar_nombre_empresa(session["empresa_id"])
+    if nombre_empresa:
+        escritor.writerow(["Empresa", nombre_empresa])
+        escritor.writerow([])
+
     escritor.writerow(
         ["Producto", "Nombre", "Categoría", *resultado["meses_pronosticados_legibles"], "Total 3 meses"]
     )

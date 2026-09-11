@@ -72,6 +72,9 @@
                             <img src="{{ static_url('img/logo.png') }}" alt="Thary" class="brand-logo">
                             <img src="{{ static_url('img/logo-icono.png') }}" alt="Thary" class="brand-logo-mini">
                         </a>
+                        {% if nombre_empresa %}
+                        <div class="sidebar-empresa nav-text" title="{{ nombre_empresa }}">{{ nombre_empresa }}</div>
+                        {% endif %}
                     </div>
 
                     {% if session.get('nombre') %}
@@ -184,12 +187,12 @@
             </div>
             <div class="asistente-mensajes" id="asistente-mensajes">
                 <div class="asistente-msg asistente-msg-bot">
-                    ¡Hola! Preguntame lo que necesites sobre el sistema: qué muestra cada
+                    ¡Hola! Pregúntame lo que necesites sobre el sistema: qué muestra cada
                     pantalla, cómo confirmar un pedido, qué diferencia hay entre roles, etc.
                 </div>
             </div>
             <form class="asistente-form" id="asistente-form">
-                <input type="text" id="asistente-input" placeholder="Escribí tu pregunta..." maxlength="1000" autocomplete="off">
+                <input type="text" id="asistente-input" placeholder="Escribe tu pregunta..." maxlength="1000" autocomplete="off">
                 <button type="submit" title="Enviar"><i class="fa fa-paper-plane"></i></button>
             </form>
         </div>

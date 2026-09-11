@@ -1,5 +1,5 @@
 import os
-from flask import Flask, url_for
+from flask import Flask, url_for, session
 
 
 def create_app():
@@ -73,5 +73,16 @@ def create_app():
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(asistente_bp)
+
+    @app.context_processor
+    def inyectar_nombre_empresa():
+        """Disponible como "nombre_empresa" en cualquier template que
+        extienda base.html (se usa en el sidebar) sin que cada ruta
+        tenga que pasarlo a mano — login/registro no tienen empresa_id
+        en sesión todavía, así que ahí queda None."""
+        if "empresa_id" not in session:
+            return {"nombre_empresa": None}
+        from app.services.perfil_empresa import cargar_nombre_empresa
+        return {"nombre_empresa": cargar_nombre_empresa(session["empresa_id"])}
 
     return app

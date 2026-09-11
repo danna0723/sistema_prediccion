@@ -78,5 +78,21 @@
     "password_hash": "scrypt:32768:8:1$5JLnboE4rQCpQLnO$20e715a4a7d8fd78df1274f5912204191803ce4e04bef2e42e0bb808a5c4a1fe422d84c1521b03b22e2193b0cf1458f490ec456142ebbcb4ca9b2b1af2a3dada",
     "rol": "empleado",
     "empresa_id": "e3f465ae2fc14850af3423c7d69f76be"
+  },
+  {
+    "nombre": "andrea",
+    "username": "andrea",
+    "email": "andrea@gmail.com",
+    "password_hash": "scrypt:32768:8:1$NDk3PVnWxZN15kyI$01f966e1d7d9e6473e6d3de53755b1005c003e7fc58e3e6956c50ea9f3d5b9bb2d8a6459af84916aa01c8c8d5441cfc06ffbe6c0ad46793e1e1bf0ac396eb8b9",
+    "rol": "admin",
+    "empresa_id": "21eb4ecdab8945e191cac21a6f28a105"
+  },
+  {
+    "nombre": "ana",
+    "username": "empleado2",
+    "email": "empleado@jsonapi.com",
+    "password_hash": "scrypt:32768:8:1$Cgv4xxvazx5msDqE$55aac903eb957dc45ec2bf47286eabd8fcc76b949cac10cd5b223e5a24f8a23487e30b3c2ee77209913efecc50e339e7772d6115233eeb381de4c531a707d4c8",
+    "rol": "empleado",
+    "empresa_id": "21eb4ecdab8945e191cac21a6f28a105"
   }
 ]

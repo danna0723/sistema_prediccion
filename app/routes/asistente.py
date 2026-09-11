@@ -33,7 +33,7 @@ def mensaje():
     texto = (datos.get("mensaje") or "").strip()
 
     if not texto:
-        return jsonify({"error": "Escribí una pregunta."}), 400
+        return jsonify({"error": "Escribe una pregunta."}), 400
     if len(texto) > MENSAJE_MAX:
         return jsonify({"error": "El mensaje es demasiado largo."}), 400
 

@@ -84,6 +84,17 @@ a:hover { color: var(--md-primary-dark); }
     border-radius: 8px;
     object-fit: cover;
 }
+.sidebar-empresa {
+    margin-top: 10px;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--md-text-muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 .sidebar-user {
     display: flex;
