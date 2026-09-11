@@ -94,5 +94,13 @@
     "password_hash": "scrypt:32768:8:1$Cgv4xxvazx5msDqE$55aac903eb957dc45ec2bf47286eabd8fcc76b949cac10cd5b223e5a24f8a23487e30b3c2ee77209913efecc50e339e7772d6115233eeb381de4c531a707d4c8",
     "rol": "empleado",
     "empresa_id": "21eb4ecdab8945e191cac21a6f28a105"
+  },
+  {
+    "nombre": "wesley",
+    "username": "weli",
+    "email": "weli@gmail.com",
+    "password_hash": "scrypt:32768:8:1$fyMEaHcVMXS8CErP$0a945fa4e14bf02f4556f7febe5c6464d6d393eb6dd1290cb231af26ce7951eaeef53214106086c2e2c9274b3b4aab545193659e52e583b6562f6d127cad7aa7",
+    "rol": "admin",
+    "empresa_id": "37cdec89078c40de9d655c4000038fcb"
   }
 ]
