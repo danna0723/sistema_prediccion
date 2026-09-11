@@ -198,7 +198,7 @@ def calcular_tabla_reorden(
         "nombre_producto", "categoria", "proveedor_principal", "proveedor_alterno",
         "fecha_estimada_pedido", "inventario_actual", "eoq", "limite_presupuesto_unidades",
         "cantidad_sugerida_pedido", "costo_unitario", "costo_estimado_pedido",
-        "valor_inventario_actual",
+        "valor_inventario_actual", "dias_para_pedido",
     ])
 
     return reorder_df, working_capital_budget, presupuesto_por_producto
