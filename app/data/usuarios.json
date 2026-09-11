@@ -62,5 +62,21 @@
     "password_hash": "scrypt:32768:8:1$ccAKyzDghsyGz0tv$fe4269a03905900f143e8990a47f2a68819017752b23e3a92b7aac0a6cef7394d06b096b8b4a19ecb5463e664ad2d5105f6b9eebe197e9d2d8a4340075d44798",
     "rol": "admin",
     "empresa_id": "82cdb121199e49c99f762534da7a72ca"
+  },
+  {
+    "nombre": "Dana",
+    "username": "dana20",
+    "email": "danna.andrea20@gmail.com",
+    "password_hash": "scrypt:32768:8:1$w519Sm8RGeaHrLQn$d37f9b42b62acf032427e5e87d90ec8eb759c099779686b5493b7fb6b35fc0f1a00d134419c5a4dd3073307b1c23c7d4489cc51f56f93d894702086c38ae8df5",
+    "rol": "admin",
+    "empresa_id": "e3f465ae2fc14850af3423c7d69f76be"
+  },
+  {
+    "nombre": "danna",
+    "username": "empleado",
+    "email": "empleado@gmail.com",
+    "password_hash": "scrypt:32768:8:1$5JLnboE4rQCpQLnO$20e715a4a7d8fd78df1274f5912204191803ce4e04bef2e42e0bb808a5c4a1fe422d84c1521b03b22e2193b0cf1458f490ec456142ebbcb4ca9b2b1af2a3dada",
+    "rol": "empleado",
+    "empresa_id": "e3f465ae2fc14850af3423c7d69f76be"
   }
 ]

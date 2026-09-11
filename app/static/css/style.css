@@ -42,6 +42,10 @@ body, .main-wrapper {
     background: var(--md-bg) !important;
     font-family: 'Roboto', 'Open Sans', sans-serif;
     color: var(--md-text-muted);
+    /* Red de seguridad para mobile: si algún elemento se pasa de ancho
+       por error, que scrollee dentro de sí mismo (ver .table-responsive)
+       en vez de arrastrar a toda la página a un scroll horizontal. */
+    overflow-x: hidden;
 }
 .app {
     background-color: var(--md-bg) !important;
@@ -269,11 +273,18 @@ a:hover { color: var(--md-primary-dark); }
     color: var(--md-text);
 }
 
-/* Grupo izquierdo del header: hamburguesa(s) + breadcrumb, juntos */
+/* Grupo izquierdo del header: hamburguesa(s) + breadcrumb, juntos.
+   min-width: 0 es necesario para que el hijo (el breadcrumb) pueda
+   angostarse por debajo de su ancho de contenido dentro del flex del
+   header — sin esto, un título largo empuja al grupo de íconos de la
+   derecha fuera de la pantalla en vez de truncarse (bug clásico de
+   flexbox en mobile). */
 .header .header-left {
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 /* Breadcrumb (izquierda del header): "Sección / Página actual" */
@@ -282,9 +293,11 @@ a:hover { color: var(--md-primary-dark); }
     align-items: center;
     gap: 8px;
     font-size: .95rem;
+    min-width: 0;
 }
 .breadcrumb-seccion {
     color: var(--md-text-muted);
+    white-space: nowrap;
 }
 .breadcrumb-sep {
     color: var(--md-text-muted);
@@ -293,6 +306,9 @@ a:hover { color: var(--md-primary-dark); }
 .breadcrumb-actual {
     color: var(--md-text);
     font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Buscador (derecha del header). Selector con la misma especificidad
@@ -412,6 +428,19 @@ a:hover { color: var(--md-primary-dark); }
 @media (max-width: 767.98px) {
     .header-search {
         display: none;
+    }
+    /* En una pantalla angosta el celular ya "sabe" en qué sección está
+       (se llegó ahí navegando el menú); mostrar solo la página actual
+       dentro del breadcrumb deja más aire para el título y los íconos
+       de la derecha. */
+    .breadcrumb-seccion, .breadcrumb-sep {
+        display: none;
+    }
+    .header .header-left {
+        gap: 10px;
+    }
+    .header .header-block-buttons {
+        gap: 10px;
     }
 }
 
