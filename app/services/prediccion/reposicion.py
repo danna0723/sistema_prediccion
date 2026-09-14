@@ -8,6 +8,16 @@ LEAD_TIME_DEFAULT_MESES = 0.5
 WORKING_CAPITAL_BUDGET_DEFAULT = 500_000
 DIAS_POR_MES = 30.44
 
+# Techo de seguridad para "días hasta que haga falta pedir": muy por
+# encima de los 90 días que usa la pantalla de presupuesto para
+# "próximos pedidos" (así nunca cambia qué se le muestra al usuario),
+# pero muy por debajo del límite que soporta pd.Timedelta (~106.751
+# días). Sin este techo, un producto con demanda pronosticada muy
+# cercana a cero puede dar una cantidad de días astronómica —
+# matemáticamente "correcta" pero sin sentido práctico— que desborda
+# pd.Timedelta y frena el procesamiento de todo el archivo.
+DIAS_PARA_PEDIDO_TECHO = 36_500  # 100 años
+
 
 # ============================================================
 # PUNTOS DE REORDEN Y EOQ
@@ -152,7 +162,10 @@ def calcular_tabla_reorden(
             dias_para_pedido = 0
         elif demanda_promedio > 0:
             demanda_diaria = demanda_promedio / DIAS_POR_MES
-            dias_para_pedido = (inventario_actual - punto_reorden) / demanda_diaria
+            dias_para_pedido = min(
+                (inventario_actual - punto_reorden) / demanda_diaria,
+                DIAS_PARA_PEDIDO_TECHO,
+            )
             fecha_estimada_pedido = fecha_referencia + pd.Timedelta(days=dias_para_pedido)
         else:
             fecha_estimada_pedido = None

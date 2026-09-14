@@ -102,5 +102,29 @@
     "password_hash": "scrypt:32768:8:1$fyMEaHcVMXS8CErP$0a945fa4e14bf02f4556f7febe5c6464d6d393eb6dd1290cb231af26ce7951eaeef53214106086c2e2c9274b3b4aab545193659e52e583b6562f6d127cad7aa7",
     "rol": "admin",
     "empresa_id": "37cdec89078c40de9d655c4000038fcb"
+  },
+  {
+    "nombre": "danna",
+    "username": "danna23",
+    "email": "danna.andrea234@gmail.com",
+    "password_hash": "scrypt:32768:8:1$SFeMHCC104MyyI3Y$c7d9ebc9f5c836029a5e6aa431864fb27b0a1e31d4e3943b8d90058cfcad4718b205f1e84a22907b423716ea9151c7c4a01442b5164236c764c6bcc30f6d755b",
+    "rol": "admin",
+    "empresa_id": "0c453083f2c14a1ebfa61dbee8257ac4"
+  },
+  {
+    "nombre": "delio",
+    "username": "delio",
+    "email": "delio@gmail.com",
+    "password_hash": "scrypt:32768:8:1$xwfsP0c1JX95d2uU$592f7c4e2628339baa6f367d3b913eb32c7079e72fdedf90e34bc40e26ff3439b659d45e684fde28470abd31db5bbf6b53a874961222e8c14aaea190dc9b89b3",
+    "rol": "admin",
+    "empresa_id": "fe1cc2acb9864c31b7fe8677ccd12df3"
+  },
+  {
+    "nombre": "danna1234",
+    "username": "danna1234",
+    "email": "danna.andrea12345@gmail.com",
+    "password_hash": "scrypt:32768:8:1$x5qurjubma5ztJMc$006403b0c86d995d419209c02ac00f87ceefacd4ad53e490376f4a44c82b14c0da76f9ef0cb19d1723003d4b88a531b32090b2a828bb73b926ea1e9873bce654",
+    "rol": "empleado",
+    "empresa_id": "fe1cc2acb9864c31b7fe8677ccd12df3"
   }
 ]

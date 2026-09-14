@@ -1,0 +1,301 @@
+producto_id,nombre_producto,categoria,mes_pronosticado,horizonte,prediccion_xgboost,prediccion_regresion_lineal,prediccion_baseline,prediccion_final,metodo_usado
+1001,,Electronics,2024-01,1,0.79,13.98,46.67,46.67,Media móvil
+1002,,Furniture,2024-01,1,7.93,15.98,31.0,15.98,Regresión Lineal
+1003,,Furniture,2024-01,1,10.95,13.04,19.33,10.95,XGBoost
+1004,,Clothing,2024-01,1,18.26,15.42,4.0,18.26,XGBoost
+1005,,Clothing,2024-01,1,4.0,3.66,33.0,33.0,Media móvil
+1006,,Food,2024-01,1,3.45,9.05,7.33,7.33,Media móvil
+1007,,Furniture,2024-01,1,8.14,10.34,0.0,8.14,XGBoost
+1008,,Clothing,2024-01,1,13.76,21.78,41.0,41.0,Media móvil
+1009,,Clothing,2024-01,1,6.36,19.43,4.67,6.36,XGBoost
+1010,,Food,2024-01,1,1.0,9.47,16.67,9.47,Regresión Lineal
+1011,,Electronics,2024-01,1,3.73,0.52,4.33,4.33,Media móvil
+1012,,Electronics,2024-01,1,8.33,15.28,22.67,15.28,Regresión Lineal
+1013,,Clothing,2024-01,1,5.94,18.0,22.0,22.0,Media móvil
+1014,,Furniture,2024-01,1,2.11,6.69,26.33,26.33,Media móvil
+1015,,Electronics,2024-01,1,0.0,7.75,8.0,7.75,Regresión Lineal
+1016,,Electronics,2024-01,1,1.26,13.71,20.33,13.71,Regresión Lineal
+1017,,Furniture,2024-01,1,5.55,22.79,11.33,11.33,Media móvil
+1018,,Clothing,2024-01,1,6.59,8.05,0.0,6.59,XGBoost
+1019,,Clothing,2024-01,1,0.1,7.2,49.33,49.33,Media móvil
+1020,,Clothing,2024-01,1,2.07,6.66,15.0,15.0,Media móvil
+1021,,Electronics,2024-01,1,3.52,12.18,15.33,15.33,Media móvil
+1022,,Furniture,2024-01,1,10.74,1.77,13.0,10.74,XGBoost
+1023,,Clothing,2024-01,1,1.77,10.07,29.67,29.67,Media móvil
+1024,,Food,2024-01,1,14.94,29.68,21.67,14.94,XGBoost
+1025,,Electronics,2024-01,1,2.87,11.19,27.67,27.67,Media móvil
+1026,,Electronics,2024-01,1,1.29,5.44,27.0,27.0,Media móvil
+1027,,Food,2024-01,1,2.71,17.66,0.0,2.71,XGBoost
+1028,,Clothing,2024-01,1,1.38,6.58,22.33,22.33,Media móvil
+1029,,Clothing,2024-01,1,0.84,9.61,12.33,9.61,Regresión Lineal
+1030,,Clothing,2024-01,1,5.99,14.72,21.0,21.0,Media móvil
+1031,,Clothing,2024-01,1,0.81,0.0,7.33,7.33,Media móvil
+1032,,Electronics,2024-01,1,4.78,10.88,21.67,10.88,Regresión Lineal
+1033,,Clothing,2024-01,1,11.58,19.02,42.33,42.33,Media móvil
+1034,,Food,2024-01,1,21.42,15.4,11.33,15.4,Regresión Lineal
+1035,,Clothing,2024-01,1,8.02,20.79,0.33,0.33,Media móvil
+1036,,Furniture,2024-01,1,11.82,10.67,35.67,35.67,Media móvil
+1037,,Clothing,2024-01,1,0.0,7.66,10.67,10.67,Media móvil
+1038,,Clothing,2024-01,1,6.41,11.93,10.67,6.41,XGBoost
+1039,,Clothing,2024-01,1,12.46,19.04,0.0,12.46,XGBoost
+1040,,Clothing,2024-01,1,5.37,7.44,15.67,15.67,Media móvil
+1041,,Food,2024-01,1,1.54,4.05,13.33,13.33,Media móvil
+1042,,Electronics,2024-01,1,5.17,15.6,0.0,5.17,XGBoost
+1043,,Electronics,2024-01,1,0.0,0.0,14.33,14.33,Media móvil
+1044,,Food,2024-01,1,2.41,9.0,5.67,5.67,Media móvil
+1045,,Clothing,2024-01,1,0.81,11.44,22.0,22.0,Media móvil
+1046,,Furniture,2024-01,1,3.49,10.23,0.0,3.49,XGBoost
+1047,,Clothing,2024-01,1,9.49,16.38,14.33,16.38,Regresión Lineal
+1048,,Electronics,2024-01,1,2.15,21.3,16.0,16.0,Media móvil
+1049,,Electronics,2024-01,1,0.0,4.49,35.33,35.33,Media móvil
+1050,,Furniture,2024-01,1,1.19,18.83,9.33,9.33,Media móvil
+1051,,Electronics,2024-01,1,1.34,8.88,38.67,38.67,Media móvil
+1052,,Furniture,2024-01,1,1.69,3.05,41.67,41.67,Media móvil
+1053,,Furniture,2024-01,1,0.17,6.1,56.33,56.33,Media móvil
+1054,,Electronics,2024-01,1,29.47,22.45,21.33,22.45,Regresión Lineal
+1055,,Furniture,2024-01,1,2.93,2.25,18.0,18.0,Media móvil
+1056,,Clothing,2024-01,1,8.1,18.91,9.67,9.67,Media móvil
+1057,,Food,2024-01,1,4.44,8.2,32.33,32.33,Media móvil
+1058,,Clothing,2024-01,1,6.41,26.96,45.67,26.96,Regresión Lineal
+1059,,Electronics,2024-01,1,5.66,10.3,15.0,15.0,Media móvil
+1060,,Clothing,2024-01,1,3.53,8.6,41.33,41.33,Media móvil
+1061,,Clothing,2024-01,1,1.85,24.49,38.0,24.49,Regresión Lineal
+1062,,Electronics,2024-01,1,8.91,29.64,41.67,41.67,Media móvil
+1063,,Electronics,2024-01,1,0.8,21.08,30.33,21.08,Regresión Lineal
+1064,,Clothing,2024-01,1,1.4,7.37,11.67,11.67,Media móvil
+1065,,Clothing,2024-01,1,0.0,0.0,16.0,16.0,Media móvil
+1066,,Furniture,2024-01,1,0.35,6.62,1.33,1.33,Media móvil
+1067,,Electronics,2024-01,1,16.54,29.27,0.0,16.54,XGBoost
+1068,,Clothing,2024-01,1,3.47,0.68,14.0,14.0,Media móvil
+1069,,Electronics,2024-01,1,0.57,18.46,38.67,38.67,Media móvil
+1070,,Furniture,2024-01,1,0.12,0.0,30.0,30.0,Media móvil
+1071,,Food,2024-01,1,4.15,0.0,40.33,40.33,Media móvil
+1072,,Clothing,2024-01,1,2.81,2.27,29.0,29.0,Media móvil
+1073,,Clothing,2024-01,1,0.0,0.0,83.0,83.0,Media móvil
+1074,,Furniture,2024-01,1,6.18,9.19,20.33,20.33,Media móvil
+1075,,Clothing,2024-01,1,32.15,23.48,18.33,18.33,Media móvil
+1076,,Clothing,2024-01,1,0.0,3.68,28.33,28.33,Media móvil
+1077,,Electronics,2024-01,1,1.91,1.59,17.33,17.33,Media móvil
+1078,,Furniture,2024-01,1,4.0,18.46,2.67,2.67,Media móvil
+1079,,Clothing,2024-01,1,0.01,5.5,16.67,16.67,Media móvil
+1080,,Electronics,2024-01,1,1.13,12.2,10.67,10.67,Media móvil
+1081,,Food,2024-01,1,6.24,13.9,7.67,6.24,XGBoost
+1082,,Furniture,2024-01,1,3.73,4.24,13.67,13.67,Media móvil
+1083,,Clothing,2024-01,1,4.93,6.09,0.0,4.93,XGBoost
+1084,,Furniture,2024-01,1,5.35,16.54,5.0,5.35,XGBoost
+1085,,Clothing,2024-01,1,2.18,13.74,24.67,24.67,Media móvil
+1086,,Food,2024-01,1,1.19,11.66,42.67,42.67,Media móvil
+1087,,Furniture,2024-01,1,9.53,12.15,28.33,28.33,Media móvil
+1088,,Furniture,2024-01,1,0.0,0.0,32.33,32.33,Media móvil
+1089,,Furniture,2024-01,1,2.08,4.89,64.33,64.33,Media móvil
+1090,,Clothing,2024-01,1,8.42,37.52,47.67,47.67,Media móvil
+1091,,Electronics,2024-01,1,0.96,1.84,18.0,18.0,Media móvil
+1092,,Clothing,2024-01,1,14.98,40.87,32.0,32.0,Media móvil
+1093,,Furniture,2024-01,1,13.06,7.17,44.33,44.33,Media móvil
+1094,,Food,2024-01,1,0.94,19.78,9.0,9.0,Media móvil
+1095,,Clothing,2024-01,1,3.75,1.61,33.67,33.67,Media móvil
+1096,,Clothing,2024-01,1,31.81,23.61,15.67,15.67,Media móvil
+1097,,Electronics,2024-01,1,2.11,5.17,25.33,25.33,Media móvil
+1098,,Electronics,2024-01,1,0.07,0.0,26.67,26.67,Media móvil
+1099,,Clothing,2024-01,1,0.0,23.81,65.0,65.0,Media móvil
+1100,,Electronics,2024-01,1,4.06,4.64,29.33,29.33,Media móvil
+1001,,Electronics,2024-02,2,0.68,8.95,45.22,45.22,Media móvil
+1002,,Furniture,2024-02,2,5.58,18.79,13.33,18.79,Regresión Lineal
+1003,,Furniture,2024-02,2,11.64,10.76,22.98,11.64,XGBoost
+1004,,Clothing,2024-02,2,15.96,14.25,10.09,15.96,XGBoost
+1005,,Clothing,2024-02,2,0.82,0.0,44.0,44.0,Media móvil
+1006,,Food,2024-02,2,4.81,5.89,9.78,9.78,Media móvil
+1007,,Furniture,2024-02,2,3.09,7.06,2.71,3.09,XGBoost
+1008,,Clothing,2024-02,2,5.18,15.37,46.67,46.67,Media móvil
+1009,,Clothing,2024-02,2,4.82,16.42,6.79,4.82,XGBoost
+1010,,Food,2024-02,2,1.12,7.66,13.16,7.66,Regresión Lineal
+1011,,Electronics,2024-02,2,4.33,0.0,5.78,5.78,Media móvil
+1012,,Electronics,2024-02,2,8.17,13.73,16.43,13.73,Regresión Lineal
+1013,,Clothing,2024-02,2,1.71,18.1,7.33,7.33,Media móvil
+1014,,Furniture,2024-02,2,8.39,1.07,35.11,35.11,Media móvil
+1015,,Electronics,2024-02,2,0.04,7.12,2.92,7.12,Regresión Lineal
+1016,,Electronics,2024-02,2,2.35,10.48,21.24,21.24,Media móvil
+1017,,Furniture,2024-02,2,9.69,22.14,14.78,9.69,XGBoost
+1018,,Clothing,2024-02,2,3.5,5.0,2.2,3.5,XGBoost
+1019,,Clothing,2024-02,2,0.08,5.99,39.44,39.44,Media móvil
+1020,,Clothing,2024-02,2,3.87,2.3,20.0,20.0,Media móvil
+1021,,Electronics,2024-02,2,5.01,10.89,20.44,20.44,Media móvil
+1022,,Furniture,2024-02,2,7.44,0.0,16.58,16.58,Media móvil
+1023,,Clothing,2024-02,2,1.18,7.38,25.56,25.56,Media móvil
+1024,,Food,2024-02,2,16.06,25.33,26.65,16.06,XGBoost
+1025,,Electronics,2024-02,2,13.83,14.12,22.22,22.22,Media móvil
+1026,,Electronics,2024-02,2,0.89,2.98,21.0,21.0,Media móvil
+1027,,Food,2024-02,2,3.96,17.9,0.9,3.96,XGBoost
+1028,,Clothing,2024-02,2,1.09,1.08,29.78,29.78,Media móvil
+1029,,Clothing,2024-02,2,1.26,9.69,10.2,9.69,Regresión Lineal
+1030,,Clothing,2024-02,2,4.9,13.63,28.0,28.0,Media móvil
+1031,,Clothing,2024-02,2,0.84,0.0,9.78,9.78,Media móvil
+1032,,Electronics,2024-02,2,3.21,9.52,15.96,9.52,Regresión Lineal
+1033,,Clothing,2024-02,2,2.21,16.45,36.11,36.11,Media móvil
+1034,,Food,2024-02,2,13.39,13.83,5.13,13.83,Regresión Lineal
+1035,,Clothing,2024-02,2,3.48,18.81,0.11,0.11,Media móvil
+1036,,Furniture,2024-02,2,6.78,8.43,31.22,31.22,Media móvil
+1037,,Clothing,2024-02,2,0.0,3.98,14.22,14.22,Media móvil
+1038,,Clothing,2024-02,2,4.29,11.53,2.47,4.29,XGBoost
+1039,,Clothing,2024-02,2,6.2,18.12,4.15,6.2,XGBoost
+1040,,Clothing,2024-02,2,1.63,2.97,20.89,20.89,Media móvil
+1041,,Food,2024-02,2,0.66,0.0,17.78,17.78,Media móvil
+1042,,Electronics,2024-02,2,2.58,16.34,1.72,2.58,XGBoost
+1043,,Electronics,2024-02,2,0.0,0.0,11.78,11.78,Media móvil
+1044,,Food,2024-02,2,2.48,10.44,3.89,2.48,XGBoost
+1045,,Clothing,2024-02,2,2.11,5.99,29.33,29.33,Media móvil
+1046,,Furniture,2024-02,2,4.04,8.91,1.16,4.04,XGBoost
+1047,,Clothing,2024-02,2,12.43,16.88,19.79,16.88,Regresión Lineal
+1048,,Electronics,2024-02,2,1.03,21.25,5.33,5.33,Media móvil
+1049,,Electronics,2024-02,2,0.52,2.66,24.44,24.44,Media móvil
+1050,,Furniture,2024-02,2,10.18,18.48,12.44,10.18,XGBoost
+1051,,Electronics,2024-02,2,0.12,4.68,36.22,36.22,Media móvil
+1052,,Furniture,2024-02,2,0.73,8.36,26.56,26.56,Media móvil
+1053,,Furniture,2024-02,2,2.91,2.63,49.11,49.11,Media móvil
+1054,,Electronics,2024-02,2,8.05,27.17,7.48,27.17,Regresión Lineal
+1055,,Furniture,2024-02,2,0.44,5.56,8.67,5.56,Regresión Lineal
+1056,,Clothing,2024-02,2,3.36,17.92,12.89,12.89,Media móvil
+1057,,Food,2024-02,2,4.2,4.49,29.78,29.78,Media móvil
+1058,,Clothing,2024-02,2,3.74,21.75,54.65,54.65,Media móvil
+1059,,Electronics,2024-02,2,4.4,9.45,10.67,10.67,Media móvil
+1060,,Clothing,2024-02,2,0.46,6.85,28.44,28.44,Media móvil
+1061,,Clothing,2024-02,2,10.57,21.76,33.83,21.76,Regresión Lineal
+1062,,Electronics,2024-02,2,3.1,28.84,54.22,54.22,Media móvil
+1063,,Electronics,2024-02,2,6.57,20.7,27.03,20.7,Regresión Lineal
+1064,,Clothing,2024-02,2,5.07,3.54,15.56,15.56,Media móvil
+1065,,Clothing,2024-02,2,0.0,0.0,21.33,21.33,Media móvil
+1066,,Furniture,2024-02,2,0.32,6.11,0.44,0.32,XGBoost
+1067,,Electronics,2024-02,2,13.75,29.23,5.51,13.75,XGBoost
+1068,,Clothing,2024-02,2,1.77,0.0,18.67,18.67,Media móvil
+1069,,Electronics,2024-02,2,1.69,14.26,36.22,36.22,Media móvil
+1070,,Furniture,2024-02,2,2.75,0.0,40.0,40.0,Media móvil
+1071,,Food,2024-02,2,2.27,0.0,46.44,46.44,Media móvil
+1072,,Clothing,2024-02,2,0.94,0.0,38.67,38.67,Media móvil
+1073,,Clothing,2024-02,2,0.0,0.0,80.67,80.67,Media móvil
+1074,,Furniture,2024-02,2,4.27,4.0,27.11,27.11,Media móvil
+1075,,Clothing,2024-02,2,18.73,20.11,18.44,18.44,Media móvil
+1076,,Clothing,2024-02,2,1.35,0.0,30.11,30.11,Media móvil
+1077,,Electronics,2024-02,2,2.05,0.0,13.78,13.78,Media móvil
+1078,,Furniture,2024-02,2,3.47,16.25,3.56,3.56,Media móvil
+1079,,Clothing,2024-02,2,0.0,5.08,5.56,5.08,Regresión Lineal
+1080,,Electronics,2024-02,2,1.86,9.53,14.22,14.22,Media móvil
+1081,,Food,2024-02,2,4.23,14.0,2.08,4.23,XGBoost
+1082,,Furniture,2024-02,2,2.38,6.9,18.22,18.22,Media móvil
+1083,,Clothing,2024-02,2,4.22,3.31,1.64,4.22,XGBoost
+1084,,Furniture,2024-02,2,3.1,13.69,6.78,6.78,Media móvil
+1085,,Clothing,2024-02,2,2.76,7.87,32.89,32.89,Media móvil
+1086,,Food,2024-02,2,12.8,8.93,46.22,46.22,Media móvil
+1087,,Furniture,2024-02,2,12.91,10.33,19.44,10.33,Regresión Lineal
+1088,,Furniture,2024-02,2,0.5,0.0,24.44,24.44,Media móvil
+1089,,Furniture,2024-02,2,0.98,3.97,50.44,50.44,Media móvil
+1090,,Clothing,2024-02,2,1.68,36.07,47.56,47.56,Media móvil
+1091,,Electronics,2024-02,2,0.01,1.55,6.0,6.0,Media móvil
+1092,,Clothing,2024-02,2,4.8,37.26,42.67,42.67,Media móvil
+1093,,Furniture,2024-02,2,1.35,3.68,37.44,37.44,Media móvil
+1094,,Food,2024-02,2,0.23,16.36,12.0,12.0,Media móvil
+1095,,Clothing,2024-02,2,0.0,0.0,37.89,37.89,Media móvil
+1096,,Clothing,2024-02,2,31.94,22.75,17.56,17.56,Media móvil
+1097,,Electronics,2024-02,2,1.42,5.58,8.44,5.58,Regresión Lineal
+1098,,Electronics,2024-02,2,0.54,0.0,28.56,28.56,Media móvil
+1099,,Clothing,2024-02,2,7.64,21.63,47.0,47.0,Media móvil
+1100,,Electronics,2024-02,2,3.66,0.0,39.11,39.11,Media móvil
+1001,,Electronics,2024-03,3,0.09,8.02,45.63,45.63,Media móvil
+1002,,Furniture,2024-03,3,6.44,18.29,11.59,18.29,Regresión Lineal
+1003,,Furniture,2024-03,3,13.38,9.13,23.2,13.38,XGBoost
+1004,,Clothing,2024-03,3,9.09,11.1,15.08,9.09,XGBoost
+1005,,Clothing,2024-03,3,1.39,0.0,35.0,35.0,Media móvil
+1006,,Food,2024-03,3,1.68,5.48,5.7,5.7,Media móvil
+1007,,Furniture,2024-03,3,7.13,7.0,3.74,7.13,XGBoost
+1008,,Clothing,2024-03,3,3.0,10.23,62.22,62.22,Media móvil
+1009,,Clothing,2024-03,3,1.73,18.5,3.73,3.73,Media móvil
+1010,,Food,2024-03,3,0.0,5.72,15.71,15.71,Media móvil
+1011,,Electronics,2024-03,3,2.56,0.0,7.7,7.7,Media móvil
+1012,,Electronics,2024-03,3,5.28,12.61,14.0,12.61,Regresión Lineal
+1013,,Clothing,2024-03,3,1.33,18.1,9.78,9.78,Media móvil
+1014,,Furniture,2024-03,3,3.11,0.0,38.15,38.15,Media móvil
+1015,,Electronics,2024-03,3,1.06,9.05,4.96,9.05,Regresión Lineal
+1016,,Electronics,2024-03,3,2.83,12.29,11.65,12.29,Regresión Lineal
+1017,,Furniture,2024-03,3,10.25,23.0,18.01,10.25,XGBoost
+1018,,Clothing,2024-03,3,3.96,4.45,3.36,3.96,XGBoost
+1019,,Clothing,2024-03,3,0.83,3.16,41.59,41.59,Media móvil
+1020,,Clothing,2024-03,3,5.06,0.0,26.67,26.67,Media móvil
+1021,,Electronics,2024-03,3,9.84,12.2,11.93,9.84,XGBoost
+1022,,Furniture,2024-03,3,11.67,0.0,12.44,11.67,XGBoost
+1023,,Clothing,2024-03,3,1.4,8.66,34.07,34.07,Media móvil
+1024,,Food,2024-03,3,13.09,30.91,17.67,13.09,XGBoost
+1025,,Electronics,2024-03,3,6.14,9.91,29.63,29.63,Media móvil
+1026,,Electronics,2024-03,3,0.61,3.8,16.0,16.0,Media móvil
+1027,,Food,2024-03,3,2.27,19.96,2.22,2.27,XGBoost
+1028,,Clothing,2024-03,3,0.0,12.33,17.37,17.37,Media móvil
+1029,,Clothing,2024-03,3,3.13,10.77,13.43,10.77,Regresión Lineal
+1030,,Clothing,2024-03,3,1.25,16.27,16.33,16.33,Media móvil
+1031,,Clothing,2024-03,3,1.31,0.0,13.04,13.04,Media móvil
+1032,,Electronics,2024-03,3,3.38,11.51,10.47,11.51,Regresión Lineal
+1033,,Clothing,2024-03,3,3.52,21.63,26.15,26.15,Media móvil
+1034,,Food,2024-03,3,12.32,10.93,9.74,10.93,Regresión Lineal
+1035,,Clothing,2024-03,3,4.53,20.59,0.15,0.15,Media móvil
+1036,,Furniture,2024-03,3,12.99,8.9,24.63,24.63,Media móvil
+1037,,Clothing,2024-03,3,0.0,1.02,18.96,18.96,Media móvil
+1038,,Clothing,2024-03,3,2.97,13.32,3.57,2.97,XGBoost
+1039,,Clothing,2024-03,3,17.4,19.03,6.22,17.4,XGBoost
+1040,,Clothing,2024-03,3,4.24,2.92,12.19,12.19,Media móvil
+1041,,Food,2024-03,3,2.92,2.04,10.37,10.37,Media móvil
+1042,,Electronics,2024-03,3,1.97,17.15,2.58,1.97,XGBoost
+1043,,Electronics,2024-03,3,0.02,0.0,14.7,14.7,Media móvil
+1044,,Food,2024-03,3,1.15,11.12,2.72,2.72,Media móvil
+1045,,Clothing,2024-03,3,0.14,0.83,38.44,38.44,Media móvil
+1046,,Furniture,2024-03,3,3.77,7.83,2.51,3.77,XGBoost
+1047,,Clothing,2024-03,3,15.52,22.28,25.42,22.28,Regresión Lineal
+1048,,Electronics,2024-03,3,1.94,19.68,7.11,7.11,Media móvil
+1049,,Electronics,2024-03,3,0.9,0.0,32.59,32.59,Media móvil
+1050,,Furniture,2024-03,3,2.21,19.73,6.5,6.5,Media móvil
+1051,,Electronics,2024-03,3,0.93,3.49,27.63,27.63,Media móvil
+1052,,Furniture,2024-03,3,1.08,4.98,29.41,29.41,Media móvil
+1053,,Furniture,2024-03,3,0.68,0.0,65.48,65.48,Media móvil
+1054,,Electronics,2024-03,3,9.22,22.18,16.54,22.18,Regresión Lineal
+1055,,Furniture,2024-03,3,0.4,3.96,10.52,10.52,Media móvil
+1056,,Clothing,2024-03,3,6.97,15.17,17.19,17.19,Media móvil
+1057,,Food,2024-03,3,2.03,1.28,31.04,31.04,Media móvil
+1058,,Clothing,2024-03,3,0.65,17.25,53.87,53.87,Media móvil
+1059,,Electronics,2024-03,3,2.16,12.54,8.56,8.56,Media móvil
+1060,,Clothing,2024-03,3,0.37,3.18,37.93,37.93,Media móvil
+1061,,Clothing,2024-03,3,3.6,17.62,41.08,41.08,Media móvil
+1062,,Electronics,2024-03,3,1.55,28.86,35.63,35.63,Media móvil
+1063,,Electronics,2024-03,3,2.07,20.85,33.93,20.85,Regresión Lineal
+1064,,Clothing,2024-03,3,1.51,0.73,20.74,20.74,Media móvil
+1065,,Clothing,2024-03,3,0.9,0.0,21.44,21.44,Media móvil
+1066,,Furniture,2024-03,3,4.55,6.78,0.55,4.55,XGBoost
+1067,,Electronics,2024-03,3,11.29,26.35,10.1,11.29,XGBoost
+1068,,Clothing,2024-03,3,1.14,0.0,10.89,10.89,Media móvil
+1069,,Electronics,2024-03,3,0.7,10.08,40.63,40.63,Media móvil
+1070,,Furniture,2024-03,3,1.66,0.0,37.0,37.0,Media móvil
+1071,,Food,2024-03,3,2.56,0.0,42.26,42.26,Media móvil
+1072,,Clothing,2024-03,3,0.36,0.0,30.22,30.22,Media móvil
+1073,,Clothing,2024-03,3,0.0,0.0,91.56,91.56,Media móvil
+1074,,Furniture,2024-03,3,12.41,4.79,22.15,12.41,XGBoost
+1075,,Clothing,2024-03,3,40.0,26.92,12.26,12.26,Media móvil
+1076,,Clothing,2024-03,3,0.44,0.0,40.15,40.15,Media móvil
+1077,,Electronics,2024-03,3,3.57,1.26,18.37,18.37,Media móvil
+1078,,Furniture,2024-03,3,2.16,15.63,2.07,2.07,Media móvil
+1079,,Clothing,2024-03,3,0.29,7.39,7.25,7.39,Regresión Lineal
+1080,,Electronics,2024-03,3,1.83,11.36,8.3,8.3,Media móvil
+1081,,Food,2024-03,3,4.5,12.6,3.49,4.5,XGBoost
+1082,,Furniture,2024-03,3,4.92,9.88,10.63,9.88,Regresión Lineal
+1083,,Clothing,2024-03,3,3.72,4.96,3.05,3.72,XGBoost
+1084,,Furniture,2024-03,3,7.05,14.68,4.04,7.05,XGBoost
+1085,,Clothing,2024-03,3,0.68,4.67,33.19,33.19,Media móvil
+1086,,Food,2024-03,3,2.09,5.86,55.96,55.96,Media móvil
+1087,,Furniture,2024-03,3,4.97,10.5,12.89,10.5,Regresión Lineal
+1088,,Furniture,2024-03,3,0.0,0.0,25.59,25.59,Media móvil
+1089,,Furniture,2024-03,3,11.1,0.25,48.93,48.93,Media móvil
+1090,,Clothing,2024-03,3,5.34,34.26,47.07,47.07,Media móvil
+1091,,Electronics,2024-03,3,0.51,0.0,8.0,8.0,Media móvil
+1092,,Clothing,2024-03,3,6.13,41.66,31.89,31.89,Media móvil
+1093,,Furniture,2024-03,3,4.41,3.23,27.26,27.26,Media móvil
+1094,,Food,2024-03,3,1.9,13.75,16.0,16.0,Media móvil
+1095,,Clothing,2024-03,3,0.91,0.0,25.19,25.19,Media móvil
+1096,,Clothing,2024-03,3,32.65,22.87,17.74,17.74,Media móvil
+1097,,Electronics,2024-03,3,1.33,3.97,10.31,10.31,Media móvil
+1098,,Electronics,2024-03,3,0.37,0.0,27.74,27.74,Media móvil
+1099,,Clothing,2024-03,3,0.19,17.96,62.67,62.67,Media móvil
+1100,,Electronics,2024-03,3,0.3,0.0,47.15,47.15,Media móvil

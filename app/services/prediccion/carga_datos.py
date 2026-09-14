@@ -8,13 +8,42 @@ import pandas as pd
 # para que el sistema acepte el formato genérico largo de CUALQUIER
 # inventario que suba el usuario (nombres de columna variables,
 # encabezados en inglés o español, meses incompletos, etc.).
+ETIQUETAS_COLUMNAS_OBLIGATORIAS = {
+    "fecha": "Fecha (o Date, Sale_Date)",
+    "producto_id": "Producto (o Product, Product_ID)",
+    "demanda": "Demanda (o Demand, Sales, Quantity_Sold)",
+}
+
+
 def cargar_y_limpiar(ruta_archivo):
     """
     Lee el CSV subido por el usuario, normaliza nombres de columnas a
     variantes conocidas (inglés/español), valida las columnas
     obligatorias y descarta el último mes si viene incompleto.
+
+    Cada problema posible levanta un ValueError con un mensaje pensado
+    para mostrarse tal cual al usuario (ver procesar() en
+    app/routes/main.py, que lo manda directo a flash()) — no un mensaje
+    técnico de pandas, sino qué le pasa al archivo y qué tiene que
+    corregir.
     """
-    df = pd.read_csv(ruta_archivo)
+    try:
+        df = pd.read_csv(ruta_archivo)
+    except pd.errors.EmptyDataError:
+        raise ValueError("El archivo está vacío. Sube un CSV con al menos una fila de datos.")
+    except pd.errors.ParserError:
+        raise ValueError(
+            "No se pudo leer el archivo como CSV. Verifica que sea un archivo de texto "
+            "separado por comas (por ejemplo, no un Excel renombrado a .csv)."
+        )
+    except UnicodeDecodeError:
+        raise ValueError(
+            "El archivo tiene una codificación de caracteres que el sistema no reconoce. "
+            "Guárdalo como CSV con codificación UTF-8 e intenta de nuevo."
+        )
+
+    if df.empty:
+        raise ValueError("El archivo no tiene filas de datos, solo encabezados.")
 
     df = df.rename(columns={
         "Sale_Date": "fecha", "Date": "fecha", "date": "fecha", "Fecha": "fecha",
@@ -35,14 +64,29 @@ def cargar_y_limpiar(ruta_archivo):
         "Proveedor_Alternativo": "proveedor_alterno",
     })
 
-    required_columns = ["fecha", "producto_id", "demanda"]
-    for col in required_columns:
-        if col not in df.columns:
-            raise ValueError(f"Falta la columna obligatoria: {col}")
+    columnas_faltantes = [c for c in ETIQUETAS_COLUMNAS_OBLIGATORIAS if c not in df.columns]
+    if columnas_faltantes:
+        faltan = ", ".join(ETIQUETAS_COLUMNAS_OBLIGATORIAS[c] for c in columnas_faltantes)
+        raise ValueError(
+            f"Al archivo le falta al menos una columna obligatoria: {faltan}. "
+            "Agrégala al CSV (con ese nombre exacto u otro de los aceptados) y vuelve a subirlo."
+        )
 
     df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
     df["demanda"] = pd.to_numeric(df["demanda"], errors="coerce")
+    filas_antes_de_limpiar = len(df)
     df = df.dropna(subset=["fecha", "producto_id", "demanda"])
+    if df.empty:
+        raise ValueError(
+            "Ninguna de las filas del archivo tiene a la vez una fecha, un producto y una "
+            "demanda válidos. Revisa que la columna de fecha tenga fechas reales (no texto) "
+            "y que la columna de demanda tenga números."
+        )
+    if len(df) < filas_antes_de_limpiar:
+        print(
+            f"Se descartaron {filas_antes_de_limpiar - len(df)} fila(s) sin fecha, "
+            "producto o demanda válidos."
+        )
     df["demanda"] = np.maximum(df["demanda"], 0)
     df = df.sort_values(["producto_id", "fecha"]).reset_index(drop=True)
 
@@ -64,7 +108,10 @@ def cargar_y_limpiar(ruta_archivo):
             f"(le faltaban {dias_faltantes} días). Filas removidas: {filas_antes - len(df)}."
         )
         if df.empty:
-            raise ValueError("Después de descartar el último mes incompleto no quedan datos.")
+            raise ValueError(
+                "El archivo solo tiene datos de un mes, y ese mes está incompleto "
+                "(no llega hasta fin de mes). Sube un archivo con más de un mes de historial."
+            )
 
     return df
 

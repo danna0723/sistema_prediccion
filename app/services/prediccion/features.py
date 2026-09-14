@@ -64,7 +64,10 @@ def construir_features(df_mensual, producto_comportamiento):
     df_model = df_mensual.dropna(subset=feature_history).copy()
 
     if len(df_model) == 0:
-        raise ValueError("No hay suficientes datos históricos para entrenar el modelo.")
+        raise ValueError(
+            "Ningún producto tiene al menos 3 meses seguidos de historial, que es lo mínimo "
+            "para calcular tendencias. Sube un archivo con más meses continuos de datos."
+        )
 
     feature_cols = [
         "año", "mes_sin", "mes_cos",

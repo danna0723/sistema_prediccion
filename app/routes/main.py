@@ -123,10 +123,20 @@ def procesar():
             presupuesto_capital_trabajo=presupuesto
         )
     except ValueError as e:
+        # Errores esperados y ya traducidos a un mensaje accionable —
+        # ver carga_datos.py, features.py y sistema_prediccion.py — se
+        # muestran tal cual, sin agregar nada técnico encima.
         flash(str(e))
         return redirect(url_for("main.index"))
     except Exception as e:
-        flash(f"Ocurrió un error inesperado procesando el archivo: {e}")
+        # Cualquier otra falla no prevista: se avisa de forma clara que
+        # el problema está en el archivo, y se agrega el detalle técnico
+        # al final por si hace falta para diagnosticarlo (esta pantalla
+        # es solo para el administrador).
+        flash(
+            "No se pudo procesar el archivo. Revisa que las columnas tengan el formato "
+            f"esperado (ver la lista de columnas más abajo). Detalle técnico: {e}"
+        )
         return redirect(url_for("main.index"))
 
     guardar_ultimo_resultado(resultado, session["empresa_id"])

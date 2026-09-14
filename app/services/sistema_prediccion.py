@@ -55,7 +55,10 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
 
     meses_ordenados = sorted(df_model["fecha"].unique())
     if len(meses_ordenados) < 4:
-        raise ValueError("Se necesitan al menos 4 meses de datos después del procesamiento.")
+        raise ValueError(
+            "El archivo necesita al menos 4 meses de historial por producto (se pierden los "
+            "primeros 3 meses al calcular tendencias). Sube un archivo con más meses de datos."
+        )
 
     # Ejemplo 1 / Ejemplo 3: split de entrenamiento/prueba por fecha (no
     # aleatorio), igual que el corte por semana en ambos notebooks de
@@ -66,7 +69,7 @@ def ejecutar_sistema(ruta_archivo, carpeta_resultados=None, presupuesto_capital_
     test_df = df_model[df_model["fecha"].isin(meses_test)].copy()
 
     if len(train_df) == 0:
-        raise ValueError("No hay suficientes datos para entrenamiento.")
+        raise ValueError("No quedó historial suficiente para entrenar el modelo. Sube un archivo con más meses de datos.")
 
     X_train = train_df[feature_cols]
     X_test = test_df[feature_cols]
